@@ -40,8 +40,8 @@ public class VideoClassificationThesisProject {
     private static final String fileNameStandard = "ssportclip2_%d";
 
     public static void main(String[] args) {
-       // trainModel3();
-        evaluateModelSeq();
+       trainModel1();
+        //evaluateModelSeq();
     }
 
     private static void trainModel1() {
@@ -54,9 +54,9 @@ public class VideoClassificationThesisProject {
         DataSetIterator testingData = null, trainingData = null;
         try {
             testingData = DataLoader.getNonSequentialData(nonSeqTestingDataPath,
-                    allowedExtensions, video_height, video_width, channels, minibatchsize, 10, true, nrOfCategories);
+                    allowedExtensions, video_height, video_width, channels, 128, 17, true, nrOfCategories);
             trainingData = DataLoader.getNonSequentialData(nonSeqTrainingDataPath,
-                    allowedExtensions, video_height, video_width, channels, minibatchsize, 10, true, nrOfCategories);
+                    allowedExtensions, video_height, video_width, channels, 128, 18, true, nrOfCategories);
         } catch (IOException e) {
             e.printStackTrace();
         }

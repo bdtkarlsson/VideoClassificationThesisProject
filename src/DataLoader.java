@@ -56,6 +56,7 @@ public class DataLoader {
             i = 1;
         }
         InputSplit data = filesInDirSplit[i];
+        System.out.println("Data loaded size: " + data.length());
 
         ImageRecordReader reader = new ImageRecordReader(frame_height, frame_width, channels ,labelMaker);
         reader.initialize(data);

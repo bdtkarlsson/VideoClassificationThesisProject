@@ -187,53 +187,55 @@ public class NetworkModels {
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .iterations(1)
                 .learningRate(learningRate2)
+                .updater(updater)
                 .list()
                 .layer(0, new ConvolutionLayer.Builder()
+                        .name("conv1")
                         .nIn(channels) //3 channels: RGB
                         .nOut(32)
                         .kernelSize(14, 14)
                         .stride(7, 7)
                         .activation("relu")
                         .weightInit(WeightInit.RELU)
-                        .updater(updater)
                         .build())   //Output: (130-10+0)/4+1 = 31 -> 31*31*30
                 .layer(1, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
+                        .name("pool1")
                         .kernelSize(3, 3)
                         .stride(2, 2).build())   //(31-3+0)/2+1 = 15
                 .layer(2, new ConvolutionLayer.Builder()
+                        .name("conv2")
                         .nIn(32)
                         .nOut(64)
                         .kernelSize(3, 3)
                         .stride(2, 2)
                         .activation("relu")
                         .weightInit(WeightInit.RELU)
-                        .updater(updater)
                         .build())   //Output: (15-3+0)/2+1 = 7 -> 7*7*10 = 490
                 .layer(3, new DenseLayer.Builder()
+                        .name("ffn1")
                         .activation("relu")
                         .nIn(3136)
                         .nOut(256)
                         .weightInit(WeightInit.RELU)
-                        .updater(updater)
                         .gradientNormalization(GradientNormalization.ClipElementWiseAbsoluteValue)
                         .gradientNormalizationThreshold(10)
                         .learningRate(learningRate)
                         .build())
                 .layer(4, new GravesLSTM.Builder()
+                        .name("lstm1")
                         .activation("softsign")
                         .nIn(256)
                         .nOut(256)
                         .weightInit(WeightInit.XAVIER)
-                        .updater(updater)
                         .gradientNormalization(GradientNormalization.ClipElementWiseAbsoluteValue)
                         .gradientNormalizationThreshold(10)
                         .learningRate(learningRate)
                         .build())
                 .layer(5, new RnnOutputLayer.Builder(LossFunctions.LossFunction.MCXENT)
+                        .name("output")
                         .activation("softmax")
                         .nIn(256)
                         .nOut(nrOfOutputs)    //4 possible shapes: circle, square, arc, line
-                        .updater(updater)
                         .weightInit(WeightInit.XAVIER)
                         .gradientNormalization(GradientNormalization.ClipElementWiseAbsoluteValue)
                         .gradientNormalizationThreshold(10)
@@ -247,7 +249,6 @@ public class NetworkModels {
                 .tBPTTBackwardLength(nrOfFrames / 5);
 
         return conf.build();
-
 
     }
 

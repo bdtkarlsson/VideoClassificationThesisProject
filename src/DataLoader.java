@@ -37,13 +37,13 @@ public class DataLoader {
      * @param percentage The percentage of the images in the path that will be loaded
      * @param upper True if the upper percentage of the images should be loaded and false if the lower percentage
      *              should be loaded
-     * @param nrOfPossibleLabels The number of possible labels/categories
+     * @param nrOfCategories The number of possible labels/categories
      * @return The DataSetIterator containing the frames and the corresponding labels
      * @throws IOException
      */
     public static DataSetIterator getNonSequentialData(String path, String[] allowedExtensions, int frame_height,
                                                        int frame_width, int channels, int miniBatchSize,
-                                                       int percentage, boolean upper, int nrOfPossibleLabels) throws IOException {
+                                                       int percentage, boolean upper, int nrOfCategories) throws IOException {
 
         File parentDir = new File(path);
         FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, new Random(100));
@@ -60,7 +60,7 @@ public class DataLoader {
         ImageRecordReader reader = new ImageRecordReader(frame_height, frame_width, channels ,labelMaker);
         reader.initialize(data);
 
-        DataSetIterator iter = new RecordReaderDataSetIterator(reader, miniBatchSize, 0, nrOfPossibleLabels);
+        DataSetIterator iter = new RecordReaderDataSetIterator(reader, miniBatchSize, 0, nrOfCategories);
 
         return iter;
     }
@@ -71,8 +71,7 @@ public class DataLoader {
      * separate txt file with the same name and number.
      *
      * @param path Path to the folder containing the videos and the labels files
-     * @param fileName The name of the video and label files
-     * @param extension The extension of the video files
+     * @param fileNameStandard The name of the video and label files (e.g. "sportclip_%d")
      * @param startIdx The start index of the video and label files
      * @param nExamples The number of data to be loaded
      * @param miniBatchSize The minibatch size
@@ -80,24 +79,22 @@ public class DataLoader {
      * @param nrFrames The number of frames to be loaded from each video file
      * @param video_height The height of the video
      * @param video_width The width of the video
-     * @param nrOfPossibleLabels The number of possible labels/categories
+     * @param nrOfCategories The number of possible labels/categories
      * @return The DataSetIterator containing the frames and the corresponding labels
      * @throws Exception
      */
-    public static DataSetIterator getSequentialData(String path, String fileName, String extension, int startIdx,
+    public static DataSetIterator getSequentialData(String path, String fileNameStandard, int startIdx,
                                                     int nExamples, int miniBatchSize, int startFrame,  int nrFrames,
-                                                    int video_height, int video_width, int nrOfPossibleLabels) throws Exception {
-        /*Create the full path to the filenames*/
-        String fullPathVideo = path + fileName + "%d." + extension;
-        String fullPathLabel = path + fileName + "%d.txt";
+                                                    int video_height, int video_width, int nrOfCategories) throws Exception {
+
         /*Get the features*/
-        SequenceRecordReader featuresTrain = getFeaturesReader(fullPathVideo, startIdx, nExamples, startFrame,
+        SequenceRecordReader featuresTrain = getFeaturesReader(path + "/" + fileNameStandard + ".mp4", startIdx, nExamples, startFrame,
                 nrFrames, video_height, video_width);
         /*Get the labels*/
-        SequenceRecordReader labelsTrain = getLabelsReader(fullPathLabel, startIdx, nExamples);
+        SequenceRecordReader labelsTrain = getLabelsReader(path + "/" + fileNameStandard + ".txt", startIdx, nExamples);
         /*Create a Data set iterator with the features and the labels*/
         SequenceRecordReaderDataSetIterator sequenceIter =
-                new SequenceRecordReaderDataSetIterator(featuresTrain, labelsTrain, miniBatchSize, nrOfPossibleLabels, false);
+                new SequenceRecordReaderDataSetIterator(featuresTrain, labelsTrain, miniBatchSize, nrOfCategories, false);
         sequenceIter.setPreProcessor(new VideoPreProcessor());
 
         /*AsyncDataSetIterator: Used to (pre-load) load data in a separate thread*/

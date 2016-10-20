@@ -73,7 +73,7 @@ public class SequentialFramesRecordReader extends FileRecordReader implements Se
 
     private List<List<Writable>> loadData(SeekableByteChannel seekableByteChannel, File f) throws IOException {
         ArrayList record = new ArrayList();
-        Picture8Bit p;
+        Picture8Bit p = null;
         BufferedImage e;
         if(this.numFrames >= 1) {
             FrameGrab8Bit i;
@@ -100,9 +100,12 @@ public class SequentialFramesRecordReader extends FileRecordReader implements Se
                         record.add(RecordConverter.toRecord(this.imageLoader.asRowVector(e)));
                     }
                 } catch (Exception var7) {
-                    System.err.println("2");
-                    var7.printStackTrace();
-                    //throw new RuntimeException(var7);
+                    try {
+                        p = FrameGrab8Bit.getFrameFromFile(f, i1);
+                    } catch (JCodecException e1) {
+                        e1.printStackTrace();
+                    }
+                    e = toBufferedImage8Bit(p);
                 }
             }
         } else {

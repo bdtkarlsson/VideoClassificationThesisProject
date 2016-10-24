@@ -20,8 +20,6 @@ public class NetworkModels {
     public static MultiLayerConfiguration getModel1(int video_height, int video_width, int channels, int nrOfOutputs) {
 
         Random rand = new Random();
-        double nonZeroBias = 1;
-        double dropOut = 0.5;
 
         SubsamplingLayer.PoolingType poolingType = SubsamplingLayer.PoolingType.MAX;
 
@@ -34,39 +32,29 @@ public class NetworkModels {
                 .iterations(1)
                 .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer) // normalize to prevent vanishing or exploding gradients
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .learningRate(1e-3)
-                .learningRateDecayPolicy(LearningRatePolicy.Step)
-                .biasLearningRate(1e-2*2)
-                .lrPolicyDecayRate(0.1)
-                .lrPolicySteps(100000)
-                .regularization(true)
-                .l2(5 * 1e-4)
+                .learningRate(0.001)
+                .regularization(true).l2(0.0005)
                 .momentum(0.9)
                 .miniBatch(false)
                 .list()
-                .layer(0, new ConvolutionLayer.Builder(new int[]{10, 10}, new int[]{4, 4}, new int[]{3, 3})
-                        .name("cnn1")
+                .layer(0, new ConvolutionLayer.Builder(new int[]{11, 11}, new int[]{5, 5}, new int[]{3, 3})
+                        .name("conv1")
                         .nIn(channels)
-                        .nOut(64)
+                        .nOut(32)
                         .build())
-
-                .layer(1, new SubsamplingLayer.Builder(poolingType, new int[]{4, 4}, new int[]{2, 2})
+                .layer(1, new SubsamplingLayer.Builder(poolingType, new int[]{3, 3}, new int[]{2, 2})
                         .name("maxpool1")
                         .build())
-                .layer(2, new ConvolutionLayer.Builder(new int[]{4, 4}, new int[]{2, 2}, new int[]{2, 2})
-                        .name("cnn2")
-                        .nOut(128)
-                        .biasInit(nonZeroBias)
+                .layer(2, new ConvolutionLayer.Builder(new int[]{4, 4}, new int[]{2,2}, new int[]{2, 2})
+                        .name("conv2")
+                        .nOut(64)
                         .build())
-                .layer(3, new SubsamplingLayer.Builder(poolingType, new int[]{4, 4}, new int[]{2, 2})
+                .layer(3, new SubsamplingLayer.Builder(poolingType, new int[]{3, 3}, new int[]{2, 2})
                         .name("maxpool2")
                         .build())
                 .layer(4, new DenseLayer.Builder()
-                        .name("ffn1")
-                        .nOut(2048)
-                        .dist(new GaussianDistribution(0, 0.005))
-                        .biasInit(nonZeroBias)
-                        .dropOut(dropOut)
+                        .name("fc1")
+                        .nOut(256)
                         .build())
                 .layer(5, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .name("output")

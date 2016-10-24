@@ -35,35 +35,45 @@ public class DataLoader {
      * @param channels Number of channels (e.g. 3 for RGB images)
      * @param miniBatchSize The minibatch size
      * @param percentage The percentage of the images in the path that will be loaded
-     * @param upper True if the upper percentage of the images should be loaded and false if the lower percentage
-     *              should be loaded
      * @param nrOfCategories The number of possible labels/categories
      * @return The DataSetIterator containing the frames and the corresponding labels
      * @throws IOException
      */
-    public static DataSetIterator getNonSequentialData(String path, String[] allowedExtensions, int frame_height,
+    public static DataSetIterator[] getNonSequentialData(String path, String[] allowedExtensions, int frame_height,
                                                        int frame_width, int channels, int miniBatchSize,
-                                                       int percentage, boolean upper, int nrOfCategories) throws IOException {
+                                                       int percentage, int nrOfCategories) throws IOException {
 
         File parentDir = new File(path);
-        FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, new Random(100));
+        FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions);
         ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
-        BalancedPathFilter pathFilter = new BalancedPathFilter(new Random(100), allowedExtensions, labelMaker);
+        BalancedPathFilter pathFilter = new BalancedPathFilter(new Random(0), allowedExtensions, labelMaker);
 
         InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, percentage, 100 - percentage);
-        int i = 0;
-        if(!upper) {
-            i = 1;
-        }
-        InputSplit data = filesInDirSplit[i];
-        System.out.println("Data loaded size: " + data.length());
+
+        InputSplit trainingData = filesInDirSplit[0];
+        System.out.println("Data loaded size: " + trainingData.length());
+        InputSplit testingData = filesInDirSplit[1];
+        System.out.println("Data loaded size: " + testingData.length());
+
+
+
+
+
 
         ImageRecordReader reader = new ImageRecordReader(frame_height, frame_width, channels ,labelMaker);
-        reader.initialize(data);
+        reader.initialize(trainingData);
+        DataSetIterator trainingIter = new RecordReaderDataSetIterator(reader, miniBatchSize, 1, nrOfCategories);
 
-        DataSetIterator iter = new RecordReaderDataSetIterator(reader, miniBatchSize, 0, nrOfCategories);
+        System.out.println(trainingIter.getLabels());
 
-        return iter;
+
+        reader = new ImageRecordReader(frame_height, frame_width, channels ,labelMaker);
+        reader.setLabels(trainingIter.getLabels());
+        reader.initialize(testingData);
+        DataSetIterator testingIter = new RecordReaderDataSetIterator(reader, miniBatchSize, 1, nrOfCategories);
+        System.out.println(testingIter.getLabels());
+
+        return new DataSetIterator[] {trainingIter, testingIter};
     }
 
     /**

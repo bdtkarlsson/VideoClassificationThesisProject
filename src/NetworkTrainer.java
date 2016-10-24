@@ -36,8 +36,10 @@ public class NetworkTrainer {
                 .epochTerminationConditions(new MaxEpochsTerminationCondition(maxEpochs), new ScoreImprovementEpochTerminationCondition(maxEpochsWithoutImprovement))
                 .iterationTerminationConditions(new MaxTimeIterationTerminationCondition(maxHours, TimeUnit.HOURS))
                 .scoreCalculator(new DataSetLossCalculator(testData, true))
+
                 .evaluateEveryNEpochs(1)
                 .modelSaver(new LocalFileModelSaver(modelSavePath))
+                .saveLastModel(true)
                 .build();
         EarlyStoppingTrainer trainer = new EarlyStoppingTrainer(esConf, model, trainData);
         //Conduct early stopping training:

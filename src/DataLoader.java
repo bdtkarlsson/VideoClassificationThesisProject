@@ -44,12 +44,12 @@ public class DataLoader {
                                                        int frame_width, int channels, int miniBatchSize,
                                                        int percentage, int nrOfCategories) throws IOException {
 
+        /*Specifying the label order to avoid different order in train- and test data*/
         ArrayList<String> labels = new ArrayList<>();
         labels.add(0, "icehockey");
         labels.add(1, "soccer");
         labels.add(2, "basketball");
         labels.add(3, "football");
-
 
         File parentDir = new File(path);
         FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions);
@@ -63,24 +63,15 @@ public class DataLoader {
         InputSplit testingData = filesInDirSplit[1];
         System.out.println("Data loaded size: " + testingData.length());
 
-
-
-
-
-
         ImageRecordReader reader = new ImageRecordReader(frame_height, frame_width, channels ,labelMaker);
         reader.setLabels(labels);
         reader.initialize(trainingData);
         DataSetIterator trainingIter = new RecordReaderDataSetIterator(reader, miniBatchSize, 1, nrOfCategories);
 
-        System.out.println(trainingIter.getLabels());
-
-
         reader = new ImageRecordReader(frame_height, frame_width, channels ,labelMaker);
         reader.setLabels(labels);
         reader.initialize(testingData);
         DataSetIterator testingIter = new RecordReaderDataSetIterator(reader, miniBatchSize, 1, nrOfCategories);
-        System.out.println(testingIter.getLabels());
 
         return new DataSetIterator[] {trainingIter, testingIter};
     }

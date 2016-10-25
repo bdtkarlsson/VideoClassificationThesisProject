@@ -29,7 +29,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Updated version of the CodecRecordReader provided by DeepLearning4j. The original CodecRecordReader
+ *  *  *  * Copyright 2015 Skymind,Inc.
+ *  *  *
+ *  *  *    Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  *    you may not use this file except in compliance with the License.
+ *  *  *    You may obtain a copy of the License at
+ *  *  *
+ *  *  *        http://www.apache.org/licenses/LICENSE-2.0
+ *  *  *
+ *  *  *    Unless required by applicable law or agreed to in writing, software
+ *  *  *    distributed under the License is distributed on an "AS IS" BASIS,
+ *  *  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  *  *    See the License for the specific language governing permissions and
+ *  *  *    limitations under the License.
+ *  *
+ *
+ * !NOTE!
+ *
+ * This is an updated version of the CodecRecordReader provided by DeepLearning4j copyrighted by Skymind, Inc. The original CodecRecordReader
  * used an old version of Jcodecs (1.5) which resulted in error when grabbing some frames. The new version (2.0)
  * depreceates the FrameGrab class and instead uses the FrameGrab8Bit class which is more stable and does not generate
  * error for some frames.

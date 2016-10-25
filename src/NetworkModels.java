@@ -170,6 +170,7 @@ public class NetworkModels {
                 .iterations(1)
                 .learningRate(0.001)
                 .list()
+
                 .layer(0, new ConvolutionLayer.Builder()
                         .nIn(channels) //3 channels: RGB
                         .nOut(32)

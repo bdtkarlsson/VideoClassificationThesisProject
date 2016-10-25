@@ -42,12 +42,12 @@ public class VideoClassificationThesisProject {
     private static final String fileNameStandard = "ssportclip2_%d";
 
     public static void main(String[] args) {
-
+        evaluateModelSeq();
        //evaluateModelNonSeq("saved_models/bestModel.bin");
         //trainModel1();
         //trainModel2();
-        trainModel3();
-        //evaluateModelSeq();
+       // trainModel3();
+
     }
 
     private static void trainModel1() {

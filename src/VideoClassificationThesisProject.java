@@ -5,7 +5,9 @@ import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.deeplearning4j.ui.weights.HistogramIterationListener;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +20,7 @@ public class VideoClassificationThesisProject {
     private static final int video_height = 224;
     private static final int video_width = 224;
     private static final int channels = 3;
-    private static final int minibatchsize = 64;
+    private static final int minibatchsize = 16;
     private static final int nrOfCategories = 4;
     private static final String savedModelsPath = "saved_models";
 
@@ -40,8 +42,11 @@ public class VideoClassificationThesisProject {
     private static final String fileNameStandard = "ssportclip2_%d";
 
     public static void main(String[] args) {
-       //evaluateModelNonSeq("saved_models/modelX");
-        trainModel1();
+
+       //evaluateModelNonSeq("saved_models/bestModel.bin");
+        //trainModel1();
+        //trainModel2();
+        trainModel3();
         //evaluateModelSeq();
     }
 
@@ -50,6 +55,7 @@ public class VideoClassificationThesisProject {
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
         model.init();
         model.setListeners(new ScoreIterationListener(1), new HistogramIterationListener(1));
+
 
         DataSetIterator[] data = null;
         try {
@@ -60,31 +66,25 @@ public class VideoClassificationThesisProject {
             e.printStackTrace();
         }
         NetworkTrainer.earlyStoppingTrain(model, savedModelsPath, data[0], data[1], maxEpochs, maxHours, 5);
-       /* try {
-            while(true) {
-                NetworkTrainer.train(model, data[0], data[1], 1);
-                ModelHandler.saveModel(model, "saved_models/modelX");
-                evaluateModelNonSeq("saved_models/modelX");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
+
     }
 
     private static void trainModel2() {
         MultiLayerConfiguration conf = NetworkModels.getModel2(video_height, video_width, channels, nrOfCategories);
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
         model.init();
-        model.setListeners(new ScoreIterationListener(1), new HistogramIterationListener(1));
+        model.setListeners(new ScoreIterationListener(1));
 
         DataSetIterator[] data = null;
         try {
             data = DataLoader.getNonSequentialData(nonSeqTrainingDataPath,
                     allowedExtensions, video_height, video_width, channels, minibatchsize, 90, nrOfCategories);
-
+            PrintStream out = new PrintStream(new FileOutputStream("output.txt"));
+            System.setOut(out);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         NetworkTrainer.earlyStoppingTrain(model, savedModelsPath, data[0], data[1], maxEpochs, maxHours, 5);
     }
 
@@ -127,7 +127,7 @@ public class VideoClassificationThesisProject {
             e.printStackTrace();
         }
         Map<Integer, String> labelMap = new HashMap<>();
-        labelMap.put(0, "ice hockey");
+        labelMap.put(0, "icehockey");
         labelMap.put(1, "soccer");
         labelMap.put(2, "basketball");
         labelMap.put(3, "american football");
@@ -142,15 +142,15 @@ public class VideoClassificationThesisProject {
         MultiLayerNetwork model = null;
         DataSetIterator[] data = null;
         try {
-            data = DataLoader.getNonSequentialData(nonSeqTestingDataPath,
-                    allowedExtensions, video_height, video_width, channels, minibatchsize, 90, nrOfCategories);
+            data = DataLoader.getNonSequentialData(nonSeqTrainingDataPath,
+                    allowedExtensions, video_height, video_width, channels, minibatchsize, 97, nrOfCategories);
             model = ModelHandler.loadModel(pathModel);
         } catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println(model);
         Map<Integer, String> labelMap = new HashMap<>();
-        labelMap.put(0, "ice hockey");
+        labelMap.put(0, "icehockey");
         labelMap.put(1, "soccer");
         labelMap.put(2, "basketball");
         labelMap.put(3, "american football");

@@ -15,6 +15,7 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -43,6 +44,13 @@ public class DataLoader {
                                                        int frame_width, int channels, int miniBatchSize,
                                                        int percentage, int nrOfCategories) throws IOException {
 
+        ArrayList<String> labels = new ArrayList<>();
+        labels.add(0, "icehockey");
+        labels.add(1, "soccer");
+        labels.add(2, "basketball");
+        labels.add(3, "football");
+
+
         File parentDir = new File(path);
         FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions);
         ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
@@ -61,6 +69,7 @@ public class DataLoader {
 
 
         ImageRecordReader reader = new ImageRecordReader(frame_height, frame_width, channels ,labelMaker);
+        reader.setLabels(labels);
         reader.initialize(trainingData);
         DataSetIterator trainingIter = new RecordReaderDataSetIterator(reader, miniBatchSize, 1, nrOfCategories);
 
@@ -68,7 +77,7 @@ public class DataLoader {
 
 
         reader = new ImageRecordReader(frame_height, frame_width, channels ,labelMaker);
-        reader.setLabels(trainingIter.getLabels());
+        reader.setLabels(labels);
         reader.initialize(testingData);
         DataSetIterator testingIter = new RecordReaderDataSetIterator(reader, miniBatchSize, 1, nrOfCategories);
         System.out.println(testingIter.getLabels());

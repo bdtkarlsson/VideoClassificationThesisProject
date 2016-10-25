@@ -37,7 +37,7 @@ public class NetworkModels {
                 .momentum(0.9)
                 .miniBatch(false)
                 .list()
-                .layer(0, new ConvolutionLayer.Builder(new int[]{11, 11}, new int[]{5, 5}, new int[]{3, 3})
+                .layer(0, new ConvolutionLayer.Builder(new int[]{14, 14}, new int[]{7, 7})
                         .name("conv1")
                         .nIn(channels)
                         .nOut(32)
@@ -45,18 +45,15 @@ public class NetworkModels {
                 .layer(1, new SubsamplingLayer.Builder(poolingType, new int[]{3, 3}, new int[]{2, 2})
                         .name("maxpool1")
                         .build())
-                .layer(2, new ConvolutionLayer.Builder(new int[]{4, 4}, new int[]{2,2}, new int[]{2, 2})
+                .layer(2, new ConvolutionLayer.Builder(new int[]{3, 3}, new int[]{2,2})
                         .name("conv2")
                         .nOut(64)
                         .build())
-                .layer(3, new SubsamplingLayer.Builder(poolingType, new int[]{3, 3}, new int[]{2, 2})
-                        .name("maxpool2")
-                        .build())
-                .layer(4, new DenseLayer.Builder()
+                .layer(3, new DenseLayer.Builder()
                         .name("fc1")
                         .nOut(256)
                         .build())
-                .layer(5, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                .layer(4, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .name("output")
                         .nOut(nrOfOutputs)
                         .activation("softmax")
@@ -163,8 +160,6 @@ public class NetworkModels {
 
     public static MultiLayerConfiguration getModel3(int video_height, int video_width, int channels, int nrOfOutputs, int nrOfFrames) {
 
-        double learningRate = 0.001;
-        double learningRate2 = 0.001;
 
         //Set up network architecture:
         Updater updater = Updater.RMSPROP;
@@ -173,7 +168,7 @@ public class NetworkModels {
                 .regularization(true).l2(0.001) //l2 regularization on all layers
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .iterations(1)
-                .learningRate(learningRate2)
+                .learningRate(0.001)
                 .list()
                 .layer(0, new ConvolutionLayer.Builder()
                         .nIn(channels) //3 channels: RGB
@@ -199,22 +194,22 @@ public class NetworkModels {
                 .layer(3, new DenseLayer.Builder()
                         .activation("relu")
                         .nIn(3136)
-                        .nOut(128)
+                        .nOut(256)
                         .weightInit(WeightInit.RELU)
                         .updater(updater)
                         .gradientNormalization(GradientNormalization.ClipElementWiseAbsoluteValue)
                         .gradientNormalizationThreshold(10)
-                        .learningRate(learningRate)
+                        .learningRate(0.001)
                         .build())
                 .layer(4, new GravesLSTM.Builder()
                         .activation("softsign")
-                        .nIn(128)
+                        .nIn(256)
                         .nOut(64)
                         .weightInit(WeightInit.XAVIER)
                         .updater(updater)
                         .gradientNormalization(GradientNormalization.ClipElementWiseAbsoluteValue)
                         .gradientNormalizationThreshold(10)
-                        .learningRate(learningRate)
+                        .learningRate(0.001)
                         .build())
                 .layer(5, new RnnOutputLayer.Builder(LossFunctions.LossFunction.MCXENT)
                         .activation("softmax")

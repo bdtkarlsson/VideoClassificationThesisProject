@@ -18,7 +18,7 @@ public class VideoClassificationThesisProject {
     private static final int video_height = 224;
     private static final int video_width = 224;
     private static final int channels = 3;
-    private static final int minibatchsize = 16;
+    private static final int minibatchsize = 64;
     private static final int nrOfCategories = 4;
     private static final String savedModelsPath = "saved_models";
 
@@ -42,9 +42,9 @@ public class VideoClassificationThesisProject {
     public static void main(String[] args) {
         //evaluateModelSeq();
         //evaluateModelNonSeq("saved_models/bestModel.bin");
-        //trainModel1();
+        trainModel1();
         //trainModel2();
-        trainModel4();
+        //trainModel4();
         // trainModel3();
 
     }
@@ -59,7 +59,7 @@ public class VideoClassificationThesisProject {
         DataSetIterator[] data = null;
         try {
             data = DataLoader.getNonSequentialData(nonSeqDataPath,
-                    allowedExtensions, video_height, video_width, channels, minibatchsize, 90, nrOfCategories);
+                    allowedExtensions, video_height, video_width, channels, 64, 90, nrOfCategories);
 
         } catch (IOException e) {
             e.printStackTrace();

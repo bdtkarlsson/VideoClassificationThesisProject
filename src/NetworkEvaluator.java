@@ -1,15 +1,18 @@
 import org.apache.commons.io.FileUtils;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.jcodec.api.FrameGrab8Bit;
+import org.jcodec.api.JCodecException;
+import org.jcodec.common.model.Picture8Bit;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Method for evaluating a trained network
@@ -18,18 +21,17 @@ public class NetworkEvaluator {
 
     private static final String tmpSeqFolder = "video_data/sequential_data/tmp_data/";
     private static final String tmpName = "video";
+    private static final String tmpNonSeqFolder = "video_data/nonsequential_data/tmp_data/";
 
     /**
      *
      * @param model The network model used for evaluation
      * @param evaluationData The data used for evaluation
-     * @param labelMap Used for labeling the categories
      * @return The evaluation result
      */
-    public static Evaluation evaluate(MultiLayerNetwork model, DataSetIterator evaluationData,
-                                      Map<Integer,String> labelMap, boolean sequentialData) {
+    public static Evaluation evaluate(MultiLayerNetwork model, DataSetIterator evaluationData, boolean sequentialData) {
         System.out.println("Starting evaluation...");
-        Evaluation totalEvaluation = new Evaluation(labelMap);
+        Evaluation totalEvaluation = new Evaluation(LabelMap.labelMap);
         while (evaluationData.hasNext()) {
             DataSet dsTest = evaluationData.next();
             INDArray predicted = model.output(dsTest.getFeatureMatrix(), false);
@@ -42,8 +44,7 @@ public class NetworkEvaluator {
         return totalEvaluation;
     }
 
-    public static Evaluation evaluateVideoClipSeq(MultiLayerNetwork model, String path, int category, int nrOfFrames,
-                                                  Map<Integer, String> labelMap) {
+    public static Evaluation evaluateVideoClipSeq(MultiLayerNetwork model, String path, int category, int nrOfFrames) {
         PrintWriter writer = null;
         DataSetIterator testData = null;
         /*Open file*/
@@ -68,7 +69,7 @@ public class NetworkEvaluator {
                 e.printStackTrace();
             }
             /*Evaluate the input file*/
-            Evaluation eval = evaluate(model, testData, labelMap, true);
+            Evaluation eval = evaluate(model, testData, true);
             /*Delete the tmp files*/
             labelFile.delete();
             videoFile.delete();
@@ -77,7 +78,40 @@ public class NetworkEvaluator {
         return null;
     }
 
-    public static void printStats(Evaluation eval, Map<Integer, String> labelMap, int nrOfCategories) {
+    public static Evaluation evaluateVideoClipNonSeq(MultiLayerNetwork model, String path, int category, int nrOfFrames) {
+        PrintWriter writer = null;
+        DataSetIterator testData = null;
+        Evaluation eval = null;
+        /*Open file*/
+        File f = new File(path);
+        if(f.exists() && f.isFile()) {
+            try {
+                for(int i = 0; i < nrOfFrames; i++) {
+                    BufferedImage b = null;
+
+                    Picture8Bit p = FrameGrab8Bit.getFrameFromFile(f, i);
+                    b = PictureConverter.toBufferedImage8Bit(p);
+                    System.out.println(tmpNonSeqFolder + LabelMap.labelMap.get(category) + "/img_" + i + ".bmp");
+                    File outputfile = new File(tmpNonSeqFolder + LabelMap.labelMap.get(category) + "/img_" + i + ".bmp");
+                    ImageIO.write(b, "bmp", outputfile);
+                }
+                DataSetIterator data = DataLoader.getNonSequentialData(tmpNonSeqFolder + LabelMap.labelMap.get(category), new String[] {"bmp"}, 224,
+                        224, 3, 10, 100, 4)[0];
+                eval = evaluate(model, data, false);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JCodecException e) {
+                e.printStackTrace();
+            }
+            for(int i = 0; i < nrOfFrames; i++) {
+                File fd = new File(tmpNonSeqFolder + LabelMap.labelMap.get(category) + "/img_" + i + ".bmp");
+                fd.delete();
+            }
+        }
+        return eval;
+    }
+
+    public static void printStats(Evaluation eval, int nrOfCategories) {
 
         double precision, recall, accuracy, f1;
         double precisionTotal = 0, recallTotal = 0, accuracyTotal = 0, f1Total = 0;
@@ -96,7 +130,7 @@ public class NetworkEvaluator {
             recall = tp / (tp + fn);
             accuracy = (tp + tn) / (tp + fp + tn + fn);
             f1 = 2 * ((precision * recall) / (precision + recall));
-            System.out.println("CATEGORY " + labelMap.get(i) + " RESULTS:" +
+            System.out.println("CATEGORY " + LabelMap.labelMap.get(i) + " RESULTS:" +
                     "\nPrecision: " + precision +
                     "\nRecall: " + recall +
                     "\nAccuracy: " + accuracy +
@@ -118,14 +152,11 @@ public class NetworkEvaluator {
     }
 
     public static void main(String[] args) {
-        Map<Integer, String> labelMap = new HashMap<>();
-        labelMap.put(0, "ice hockey");
-        labelMap.put(1, "soccer");
-        labelMap.put(2, "basketball");
-        labelMap.put(3, "american football");
+
         try {
-            System.out.println(evaluateVideoClipSeq(ModelHandler.loadModel("saved_models/bestModel.bin"),
-                    "video_data/sequential_data/testing_data/ssportclip2_90.mp4", 0, 100, labelMap).stats());
+
+            System.out.println(evaluateVideoClipNonSeq(ModelHandler.loadModel("saved_models/model1it1.bin"),
+                    "video_data/sequential_data/testing_data/ssportclip2_16.mp4", 3, 100).stats());
         } catch (IOException e) {
             e.printStackTrace();
         }

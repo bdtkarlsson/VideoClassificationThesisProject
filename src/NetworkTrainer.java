@@ -17,17 +17,17 @@ import java.util.concurrent.TimeUnit;
  */
 public class NetworkTrainer {
 
-    public static MultiLayerNetwork train(MultiLayerNetwork model, DataSetIterator trainData, DataSetIterator testData,
+    public static MultiLayerNetwork train(MultiLayerNetwork model, DataSetIterator trainData,
                                           int nrOfEpochs) throws Exception {
         for(int i = 0; i < nrOfEpochs; i++) {
             while(trainData.hasNext()) {
                 model.fit(trainData.next());
             }
-            testData.reset();
             trainData.reset();
         }
         return model;
     }
+
 
     public static MultiLayerNetwork earlyStoppingTrain(MultiLayerNetwork model, String modelSavePath, DataSetIterator trainData,
                                                        DataSetIterator testData, int maxEpochs,
@@ -46,4 +46,6 @@ public class NetworkTrainer {
 
         return (MultiLayerNetwork) result.getBestModel();
     }
+
+
 }

@@ -8,8 +8,6 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by bdtkarlsson on 2016-10-20.
@@ -31,8 +29,8 @@ public class VideoClassificationThesisProject {
 
     /*Non-sequential data parameters*/
     private static final String[] allowedExtensions = {"bmp"};
-    private static final String nonSeqTrainingDataPath = "video_data/nonsequential_data/training_data";
-    private static final String nonSeqTestingDataPath = "video_data/nonsequential_data/testing_data";
+    private static final String nonSeqDataPath = "video_data/nonsequential_data/data_1";
+    private static final String nonSeqDataPath2 = "video_data/nonsequential_data/data_2";
 
     /*Sequential data parameters*/
     private static final int startFrame = 0;
@@ -42,11 +40,12 @@ public class VideoClassificationThesisProject {
     private static final String fileNameStandard = "ssportclip2_%d";
 
     public static void main(String[] args) {
-        evaluateModelSeq();
-       //evaluateModelNonSeq("saved_models/bestModel.bin");
+        //evaluateModelSeq();
+        //evaluateModelNonSeq("saved_models/bestModel.bin");
         //trainModel1();
         //trainModel2();
-       // trainModel3();
+        trainModel4();
+        // trainModel3();
 
     }
 
@@ -59,7 +58,7 @@ public class VideoClassificationThesisProject {
 
         DataSetIterator[] data = null;
         try {
-            data = DataLoader.getNonSequentialData(nonSeqTestingDataPath,
+            data = DataLoader.getNonSequentialData(nonSeqDataPath,
                     allowedExtensions, video_height, video_width, channels, minibatchsize, 90, nrOfCategories);
 
         } catch (IOException e) {
@@ -77,7 +76,7 @@ public class VideoClassificationThesisProject {
 
         DataSetIterator[] data = null;
         try {
-            data = DataLoader.getNonSequentialData(nonSeqTrainingDataPath,
+            data = DataLoader.getNonSequentialData(nonSeqDataPath2,
                     allowedExtensions, video_height, video_width, channels, minibatchsize, 90, nrOfCategories);
             PrintStream out = new PrintStream(new FileOutputStream("output.txt"));
             System.setOut(out);
@@ -111,6 +110,31 @@ public class VideoClassificationThesisProject {
                 maxEpochsWithoutImprovement);
     }
 
+    private static void trainModel4() {
+        MultiLayerConfiguration conf = NetworkModels.getModel4(video_height, video_width, channels, nrOfCategories,
+                nrOfFramesPerVideo);
+        MultiLayerNetwork model = new MultiLayerNetwork(conf);
+        model.init();
+        model.setListeners(new ScoreIterationListener(1));
+
+        DataSetIterator testingData = null, trainingData = null;
+        try {
+            testingData = DataLoader.getSequentialData(seqTestingDataPath, fileNameStandard, 0, 100, minibatchsize,
+                    startFrame, nrOfFramesPerVideo, video_height, video_width, nrOfCategories);
+
+            trainingData = DataLoader.getSequentialData(seqTrainingDataPath, fileNameStandard, 0, 1260, minibatchsize,
+                    startFrame, nrOfFramesPerVideo, video_height, video_width, nrOfCategories);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        NetworkTrainer.earlyStoppingTrain(model, savedModelsPath, trainingData, testingData, maxEpochs, maxHours,
+                maxEpochsWithoutImprovement);
+    }
+
+
+
     private static void evaluateModelSeq() {
         MultiLayerNetwork model = null;
         DataSetIterator testingData = null, trainingData = null;
@@ -126,13 +150,8 @@ public class VideoClassificationThesisProject {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Map<Integer, String> labelMap = new HashMap<>();
-        labelMap.put(0, "icehockey");
-        labelMap.put(1, "soccer");
-        labelMap.put(2, "basketball");
-        labelMap.put(3, "american football");
-        Evaluation eval = NetworkEvaluator.evaluate(model, testingData, labelMap, true);
-        NetworkEvaluator.printStats(eval, labelMap, 4);
+        Evaluation eval = NetworkEvaluator.evaluate(model, testingData, true);
+        NetworkEvaluator.printStats(eval, 4);
         System.out.println(eval.stats());
         // eval = NetworkEvaluator.evaluate(model, trainingData, labelMap, true);
         // System.out.println(eval.stats());
@@ -142,23 +161,20 @@ public class VideoClassificationThesisProject {
         MultiLayerNetwork model = null;
         DataSetIterator[] data = null;
         try {
-            data = DataLoader.getNonSequentialData(nonSeqTrainingDataPath,
-                    allowedExtensions, video_height, video_width, channels, minibatchsize, 97, nrOfCategories);
+            data = DataLoader.getNonSequentialData(nonSeqDataPath,
+                    allowedExtensions, video_height, video_width, channels, minibatchsize, 70, nrOfCategories);
             model = ModelHandler.loadModel(pathModel);
         } catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println(model);
-        Map<Integer, String> labelMap = new HashMap<>();
-        labelMap.put(0, "icehockey");
-        labelMap.put(1, "soccer");
-        labelMap.put(2, "basketball");
-        labelMap.put(3, "american football");
-        Evaluation eval = NetworkEvaluator.evaluate(model, data[1], labelMap, false);
-        NetworkEvaluator.printStats(eval, labelMap, 4);
+        Evaluation eval = NetworkEvaluator.evaluate(model, data[1], false);
+        NetworkEvaluator.printStats(eval, 4);
         System.out.println(eval.stats());
-        eval = NetworkEvaluator.evaluate(model, data[0], labelMap, false);
-        NetworkEvaluator.printStats(eval, labelMap, 4);
+        eval = NetworkEvaluator.evaluate(model, data[0], false);
+        NetworkEvaluator.printStats(eval, 4);
         System.out.println(eval.stats());
     }
+
+
 }

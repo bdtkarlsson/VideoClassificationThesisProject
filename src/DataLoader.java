@@ -1,3 +1,4 @@
+import jdk.nashorn.internal.ir.Labels;
 import org.datavec.api.conf.Configuration;
 import org.datavec.api.io.filters.BalancedPathFilter;
 import org.datavec.api.io.labels.ParentPathLabelGenerator;
@@ -15,7 +16,6 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -44,12 +44,7 @@ public class DataLoader {
                                                        int frame_width, int channels, int miniBatchSize,
                                                        int percentage, int nrOfCategories) throws IOException {
 
-        /*Specifying the label order to avoid different order in train- and test data*/
-        ArrayList<String> labels = new ArrayList<>();
-        labels.add(0, "icehockey");
-        labels.add(1, "soccer");
-        labels.add(2, "basketball");
-        labels.add(3, "football");
+
 
         File parentDir = new File(path);
         FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions);
@@ -64,12 +59,12 @@ public class DataLoader {
         System.out.println("Data loaded size: " + testingData.length());
 
         ImageRecordReader reader = new ImageRecordReader(frame_height, frame_width, channels ,labelMaker);
-        reader.setLabels(labels);
+        reader.setLabels(LabelMap.labels);
         reader.initialize(trainingData);
         DataSetIterator trainingIter = new RecordReaderDataSetIterator(reader, miniBatchSize, 1, nrOfCategories);
 
         reader = new ImageRecordReader(frame_height, frame_width, channels ,labelMaker);
-        reader.setLabels(labels);
+        reader.setLabels(LabelMap.labels);
         reader.initialize(testingData);
         DataSetIterator testingIter = new RecordReaderDataSetIterator(reader, miniBatchSize, 1, nrOfCategories);
 

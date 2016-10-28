@@ -1,4 +1,3 @@
-import jdk.nashorn.internal.ir.Labels;
 import org.datavec.api.conf.Configuration;
 import org.datavec.api.io.filters.BalancedPathFilter;
 import org.datavec.api.io.labels.ParentPathLabelGenerator;
@@ -44,27 +43,31 @@ public class DataLoader {
                                                        int frame_width, int channels, int miniBatchSize,
                                                        int percentage, int nrOfCategories) throws IOException {
 
-
-
+        /*Read the parent directory containing the data subfolders*/
         File parentDir = new File(path);
+        /*Create file split, label maker and path filter*/
         FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions);
         ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
         BalancedPathFilter pathFilter = new BalancedPathFilter(new Random(0), allowedExtensions, labelMaker);
-
+        /*Get the data files, split into two parts*/
         InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, percentage, 100 - percentage);
 
+        /*Get first part*/
         InputSplit trainingData = filesInDirSplit[0];
         System.out.println("Data loaded size: " + trainingData.length());
+        /*Get second part*/
         InputSplit testingData = filesInDirSplit[1];
         System.out.println("Data loaded size: " + testingData.length());
 
+        /*Retrieve data set iterator of first data part*/
         ImageRecordReader reader = new ImageRecordReader(frame_height, frame_width, channels ,labelMaker);
-        reader.setLabels(LabelMap.labels);
+        reader.setLabels(LabelMap.labels); //determine label order
         reader.initialize(trainingData);
         DataSetIterator trainingIter = new RecordReaderDataSetIterator(reader, miniBatchSize, 1, nrOfCategories);
 
+        /*Retrieve data set iterator of second data part*/
         reader = new ImageRecordReader(frame_height, frame_width, channels ,labelMaker);
-        reader.setLabels(LabelMap.labels);
+        reader.setLabels(LabelMap.labels); //determine label order
         reader.initialize(testingData);
         DataSetIterator testingIter = new RecordReaderDataSetIterator(reader, miniBatchSize, 1, nrOfCategories);
 

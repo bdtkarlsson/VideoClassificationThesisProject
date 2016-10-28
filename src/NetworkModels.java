@@ -12,12 +12,24 @@ import org.nd4j.linalg.lossfunctions.LossFunctions;
 import java.util.Random;
 
 /**
- * Class containing the network models. Model 1 is a simple CNN model. Model 2 is a AlexNet inspired model. Model 3 is a
- * LRCN inspired model.
+ * Class containing the network models.
+ * Model 1 is a simple CNN model.
+ * Model 2 is implementation of the AlexNet (http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
+ * found at https://github.com/deeplearning4j/ImageNet-Example/blob/master/src/main/java/imagenet/Models/AlexNet.java
+ * Model 3 is a LRCN (http://jeffdonahue.com/lrcn/) inspired model. The code used is based on the VideoClassificationExample
+ * provided by deeplearning4j
  */
 public class NetworkModels {
 
-    public static MultiLayerConfiguration getModel1(int video_height, int video_width, int channels, int nrOfOutputs) {
+    /**
+     * Returns the configuration for network model 1. The model is a simple CNN built as an initial model to be fast.
+     * @param video_height The height of the input
+     * @param video_width The width of the input
+     * @param channels The number of channels of the input (e.g. 3 for RGB)
+     * @param nrOfCategories The number of categories in the data
+     * @return The model configuration
+     */
+    public static MultiLayerConfiguration getModel1(int video_height, int video_width, int channels, int nrOfCategories) {
 
         Random rand = new Random();
 
@@ -55,7 +67,7 @@ public class NetworkModels {
                         .build())
                 .layer(4, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .name("output")
-                        .nOut(nrOfOutputs)
+                        .nOut(nrOfCategories)
                         .activation("softmax")
                         .build())
                 .backprop(true)
@@ -160,8 +172,6 @@ public class NetworkModels {
 
     public static MultiLayerConfiguration getModel3(int video_height, int video_width, int channels, int nrOfOutputs, int nrOfFrames) {
 
-
-        //Set up network architecture:
         Updater updater = Updater.RMSPROP;
         MultiLayerConfiguration.Builder conf = new NeuralNetConfiguration.Builder()
                 .seed(23432445)
@@ -173,17 +183,17 @@ public class NetworkModels {
                 .list()
 
                 .layer(0, new ConvolutionLayer.Builder()
-                        .nIn(channels) //3 channels: RGB
+                        .nIn(channels)
                         .nOut(32)
                         .kernelSize(14, 14)
                         .stride(7, 7)
                         .activation("relu")
                         .weightInit(WeightInit.RELU)
                         .updater(updater)
-                        .build())   //Output: (130-10+0)/4+1 = 31 -> 31*31*30
+                        .build())
                 .layer(1, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
                         .kernelSize(3, 3)
-                        .stride(2, 2).build())   //(31-3+0)/2+1 = 15
+                        .stride(2, 2).build())
                 .layer(2, new ConvolutionLayer.Builder()
                         .nIn(32)
                         .nOut(64)
@@ -192,7 +202,7 @@ public class NetworkModels {
                         .activation("relu")
                         .weightInit(WeightInit.RELU)
                         .updater(updater)
-                        .build())   //Output: (15-3+0)/2+1 = 7 -> 7*7*10 = 490
+                        .build())
                 .layer(3, new DenseLayer.Builder()
                         .activation("relu")
                         .nIn(3136)
@@ -216,7 +226,7 @@ public class NetworkModels {
                 .layer(5, new RnnOutputLayer.Builder(LossFunctions.LossFunction.MCXENT)
                         .activation("softmax")
                         .nIn(64)
-                        .nOut(nrOfOutputs)    //4 possible shapes: circle, square, arc, line
+                        .nOut(nrOfOutputs)
                         .updater(updater)
                         .weightInit(WeightInit.XAVIER)
                         .gradientNormalization(GradientNormalization.ClipElementWiseAbsoluteValue)
@@ -227,8 +237,8 @@ public class NetworkModels {
                 .inputPreProcessor(4, new FeedForwardToRnnPreProcessor())
                 .pretrain(false).backprop(true)
                 .backpropType(BackpropType.TruncatedBPTT)
-                .tBPTTForwardLength(nrOfFrames / 5)
-                .tBPTTBackwardLength(nrOfFrames / 5);
+                .tBPTTForwardLength(nrOfFrames / 2)
+                .tBPTTBackwardLength(nrOfFrames / 2);
 
         return conf.build();
 
@@ -259,7 +269,6 @@ public class NetworkModels {
                 .regularization(true)
                 .l2(5 * 1e-4)
                 .momentum(0.9)
-                .miniBatch(false)
                 .list()
                 .layer(0, new ConvolutionLayer.Builder(new int[]{11, 11}, new int[]{4, 4}, new int[]{3, 3})
                         .name("cnn1")
@@ -343,8 +352,8 @@ public class NetworkModels {
                 .inputPreProcessor(12, new FeedForwardToRnnPreProcessor())
                 .pretrain(false).backprop(true)
                 .backpropType(BackpropType.TruncatedBPTT)
-                .tBPTTForwardLength(nrOfFrames / 5)
-                .tBPTTBackwardLength(nrOfFrames / 5);
+                .tBPTTForwardLength(nrOfFrames / 2)
+                .tBPTTBackwardLength(nrOfFrames / 2);
 
         return conf.build();
     }

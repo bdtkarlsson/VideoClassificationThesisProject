@@ -127,7 +127,6 @@ public class NetworkEvaluator {
         return eval;
     }
 
-
     public static int getMostClassifiedCategory(Evaluation eval, int category, int nrOfCategories) {
         int tp = eval.truePositives().get(category);
         int bestCategory = category;
@@ -154,11 +153,7 @@ public class NetworkEvaluator {
             fp = eval.falsePositives().get(i);
             tn = eval.trueNegatives().get(i);
             fn = eval.falseNegatives().get(i);
-        /*    System.out.println("CATEGORY " + labelMap.get(i) + " RATES:" +
-                    "\ntp: " + tp +
-                    "\nfp: " + fp +
-                    "\ntn: " + tn +
-                    "\nfn: " + fn + "\n");*/
+            
             precision = tp / (tp + fp);
             recall = tp / (tp + fn);
             accuracy = (tp + tn) / (tp + fp + tn + fn);

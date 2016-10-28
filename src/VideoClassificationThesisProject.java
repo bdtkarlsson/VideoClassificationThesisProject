@@ -39,8 +39,8 @@ public class VideoClassificationThesisProject {
 
     public static void main(String[] args) {
         //evaluateVideoClips(false);
-        //evaluateModelSeq();
-       // evaluateModelNonSeq("saved_models2/bestModel.bin");
+        evaluateModelSeq();
+        //evaluateModelNonSeq("saved_models2/bestModel.bin");
          //trainModel1();
         //trainModel2();
         //trainModel4();

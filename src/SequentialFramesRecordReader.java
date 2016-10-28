@@ -105,7 +105,7 @@ public class SequentialFramesRecordReader extends FileRecordReader implements Se
                     if(p == null) {
                         p = FrameGrab8Bit.getFrameFromFile(f, i1);
                     }
-                    e = PictureConverter.toBufferedImage8Bit(p);
+                    e = AWTUtil.toBufferedImage8Bit(p);
                     if(this.ravel) {
                         record.add(RecordConverter.toRecord(this.imageLoader.toRaveledTensor(e)));
                     } else {
@@ -117,7 +117,7 @@ public class SequentialFramesRecordReader extends FileRecordReader implements Se
                     } catch (JCodecException e1) {
                         e1.printStackTrace();
                     }
-                    e = PictureConverter.toBufferedImage8Bit(p);
+                    e = AWTUtil.toBufferedImage8Bit(p);
                 }
             }
         } else {
@@ -128,7 +128,7 @@ public class SequentialFramesRecordReader extends FileRecordReader implements Se
             for(double var9 = 0.0D; var9 < this.videoLength; var9 += this.framesPerSecond) {
                 try {
                     p = FrameGrab8Bit.getFrameFromChannelAtSec(seekableByteChannel, var9);
-                    e = PictureConverter.toBufferedImage8Bit(p);
+                    e = AWTUtil.toBufferedImage8Bit(p);
                     if(this.ravel) {
                         record.add(RecordConverter.toRecord(this.imageLoader.toRaveledTensor(e)));
                     } else {

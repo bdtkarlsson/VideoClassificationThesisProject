@@ -44,7 +44,15 @@ public class NetworkEvaluator {
         return totalEvaluation;
     }
 
-    public static Evaluation evaluateVideoClipSeq(MultiLayerNetwork model, String path, int category, int nrOfFrames) {
+    /**
+     * Evaluate a video clip with a sequential model (e.g. LRCN)
+     * @param model Model to be used in the classification
+     * @param path Path to the video
+     * @param category The correct category of the video
+     * @param nrOfFrames Nr of frames from the video that should be classified
+     * @return The Evaluation Stats
+     */
+    public static Evaluation evaluateVideoClipSeq(MultiLayerNetwork model, String path, int category, int startFrame, int nrOfFrames) {
         PrintWriter writer = null;
         DataSetIterator testData = null;
         /*Open file*/
@@ -64,7 +72,7 @@ public class NetworkEvaluator {
                 }
                 writer.close();
                 /*Load the data and the labels for testing*/
-                testData = DataLoader.getSequentialData(tmpSeqFolder, tmpName + "_%d", 0, 1, 1, 0, nrOfFrames, 224, 224, 4);
+                testData = DataLoader.getSequentialData(tmpSeqFolder, tmpName + "_%d", 0, 1, 1, startFrame, nrOfFrames, 224, 224, 4);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -78,7 +86,15 @@ public class NetworkEvaluator {
         return null;
     }
 
-    public static Evaluation evaluateVideoClipNonSeq(MultiLayerNetwork model, String path, int category, int nrOfFrames) {
+    /**
+     * Evaluate a video clip with a non-sequential model (e.g. CNN)
+     * @param model Model to be used in the classification
+     * @param path Path to the video
+     * @param category The correct category of the video
+     * @param nrOfFrames Nr of frames from the video that should be classified
+     * @return The Evaluation Stats
+     */
+    public static Evaluation evaluateVideoClipNonSeq(MultiLayerNetwork model, String path, int category, int startFrame, int nrOfFrames, int frameJump) {
         PrintWriter writer = null;
         DataSetIterator testData = null;
         Evaluation eval = null;
@@ -86,14 +102,13 @@ public class NetworkEvaluator {
         File f = new File(path);
         if(f.exists() && f.isFile()) {
             try {
-                for(int i = 0; i < nrOfFrames; i++) {
+                for(int i = startFrame; i < (startFrame + nrOfFrames) * frameJump; i += frameJump) {
                     BufferedImage b = null;
 
                     Picture8Bit p = FrameGrab8Bit.getFrameFromFile(f, i);
-                    b = PictureConverter.toBufferedImage8Bit(p);
-                    System.out.println(tmpNonSeqFolder + LabelMap.labelMap.get(category) + "/img_" + i + ".bmp");
-                    File outputfile = new File(tmpNonSeqFolder + LabelMap.labelMap.get(category) + "/img_" + i + ".bmp");
-                    ImageIO.write(b, "bmp", outputfile);
+                    b = AWTUtil.toBufferedImage8Bit(p);
+                    File outputFile = new File(tmpNonSeqFolder + LabelMap.labelMap.get(category) + "/img_" + i + ".bmp");
+                    ImageIO.write(b, "bmp", outputFile);
                 }
                 DataSetIterator data = DataLoader.getNonSequentialData(tmpNonSeqFolder + LabelMap.labelMap.get(category), new String[] {"bmp"}, 224,
                         224, 3, 10, 100, 4)[0];
@@ -103,19 +118,37 @@ public class NetworkEvaluator {
             } catch (JCodecException e) {
                 e.printStackTrace();
             }
-            for(int i = 0; i < nrOfFrames; i++) {
+            for(int i = startFrame; i < (startFrame + nrOfFrames) * frameJump; i += frameJump) {
                 File fd = new File(tmpNonSeqFolder + LabelMap.labelMap.get(category) + "/img_" + i + ".bmp");
                 fd.delete();
             }
         }
+
         return eval;
     }
 
-    public static void printStats(Evaluation eval, int nrOfCategories) {
+
+    public static int getMostClassifiedCategory(Evaluation eval, int category, int nrOfCategories) {
+        int tp = eval.truePositives().get(category);
+        int bestCategory = category;
+        int bestScore = tp;
+        for(int i = 0; i < nrOfCategories; i++) {
+            if(i != category) {
+                if(eval.falsePositives().get(i) > bestScore) {
+                    bestCategory = i;
+                    bestScore = eval.falsePositives().get(i);
+                }
+            }
+        }
+        return bestCategory;
+    }
+
+    public static void printAdvancedStats(Evaluation eval, int nrOfCategories) {
 
         double precision, recall, accuracy, f1;
         double precisionTotal = 0, recallTotal = 0, accuracyTotal = 0, f1Total = 0;
         double tp, fp, tn, fn;
+
         for(int i = 0; i < nrOfCategories; i++) {
             tp = eval.truePositives().get(i);
             fp = eval.falsePositives().get(i);
@@ -151,15 +184,5 @@ public class NetworkEvaluator {
 
     }
 
-    public static void main(String[] args) {
-
-        try {
-
-            System.out.println(evaluateVideoClipNonSeq(ModelHandler.loadModel("saved_models/model1it1.bin"),
-                    "video_data/sequential_data/testing_data/ssportclip2_16.mp4", 3, 100).stats());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 }

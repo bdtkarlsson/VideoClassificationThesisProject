@@ -3,7 +3,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by bdtkarlsson on 2016-10-27.
+ * label map and label list used in the evaluation of the network and the loading of non-sequential data
  */
 public class LabelMap {
 
@@ -17,10 +17,10 @@ public class LabelMap {
         labels.add(2,"basketball");
         labels.add(3,"football");
 
-        labelMap.put(0, "icehockey");
-        labelMap.put(1, "soccer");
-        labelMap.put(2, "basketball");
-        labelMap.put(3, "american football");
+        for(int i = 0; i < labels.size(); i++) {
+            labelMap.put(i, labels.get(i));
+        }
+
     }
 
 }

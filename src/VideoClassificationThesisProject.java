@@ -38,11 +38,11 @@ public class VideoClassificationThesisProject {
     private static final String fileNameStandard = "ssportclip2_%d";
 
     public static void main(String[] args) {
-        //evaluateVideoClips(false);
-        evaluateModelSeq();
+        //evaluateVideoClips(true);
+        //evaluateModelSeq();
         //evaluateModelNonSeq("saved_models2/bestModel.bin");
          //trainModel1();
-        //trainModel2();
+        trainModel2();
         //trainModel4();
         //trainModel3();
         //trainModel2();
@@ -84,7 +84,7 @@ public class VideoClassificationThesisProject {
             e.printStackTrace();
         }
 
-        NetworkTrainer.earlyStoppingTrain(model, "saved_models2", data[0], data[1], maxEpochs, maxHours, 5);
+        NetworkTrainer.earlyStoppingTrain(model, "saved_models", data[0], data[1], maxEpochs, maxHours, 5);
     }
 
     private static void trainModel3() {
@@ -200,7 +200,8 @@ public class VideoClassificationThesisProject {
                 category = Integer.parseInt(line);
                 Evaluation eval = null;
                 if(seqData) {
-
+                    eval = NetworkEvaluator.evaluateVideoClipSeq(ModelHandler.loadModel("saved_models/model3it1.bin"),
+                            path + ".mp4", category, 0, 10);
                 } else {
                     eval = NetworkEvaluator.evaluateVideoClipNonSeq(ModelHandler.loadModel("saved_models2/bestModel.bin"),
                             path + ".mp4", category, 0, 10, 10);

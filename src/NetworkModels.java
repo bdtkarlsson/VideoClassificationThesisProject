@@ -237,8 +237,8 @@ public class NetworkModels {
                 .inputPreProcessor(4, new FeedForwardToRnnPreProcessor())
                 .pretrain(false).backprop(true)
                 .backpropType(BackpropType.TruncatedBPTT)
-                .tBPTTForwardLength(nrOfFrames / 2)
-                .tBPTTBackwardLength(nrOfFrames / 2);
+                .tBPTTForwardLength(nrOfFrames / 5)
+                .tBPTTBackwardLength(nrOfFrames / 5);
 
         return conf.build();
 

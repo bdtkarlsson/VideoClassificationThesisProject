@@ -12,11 +12,10 @@ import java.io.*;
  */
 public class VideoClassificationThesisProject {
 
-
     private static final int video_height = 224;
     private static final int video_width = 224;
     private static final int channels = 3;
-    private static final int minibatchsize = 16;
+    private static final int minibatchsize = 64;
     private static final int nrOfCategories = 11;
     private static final String savedModelsPath = "saved_models";
 
@@ -27,8 +26,8 @@ public class VideoClassificationThesisProject {
 
     /*Non-sequential data parameters*/
     private static final String[] allowedExtensions = {"bmp"};
-    private static final String nonSeqDataPath = "video_data/nonsequential_data/data_1";
-    private static final String nonSeqDataPath2 = "video_data/nonsequential_data/data_2";
+    private static final String nonSeqDataPath = "video_data/nonsequential_data/data_1_it2";
+    private static final String nonSeqDataPath2 = "video_data/nonsequential_data/data_2_it2";
 
     /*Sequential data parameters*/
     private static final int startFrame = 0;
@@ -38,10 +37,10 @@ public class VideoClassificationThesisProject {
     private static final String fileNameStandard = "sportclip_%d";
 
     public static void main(String[] args) {
-        evaluateVideoClips(true);
+        evaluateVideoClips(false);
         //evaluateModelSeq();
         //evaluateModelNonSeq("saved_models/bestModel.bin");
-         //trainModel1();
+        //trainModel1();
         //trainModel2();
         //trainModel4();
         //trainModel3();
@@ -59,30 +58,29 @@ public class VideoClassificationThesisProject {
         DataSetIterator[] data = null;
         try {
             data = DataLoader.getNonSequentialData(nonSeqDataPath,
-                    allowedExtensions, video_height, video_width, channels, 64, 90, nrOfCategories);
+                    allowedExtensions, video_height, video_width, channels, minibatchsize, 90, nrOfCategories);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        NetworkTrainer.earlyStoppingTrain(model, savedModelsPath, data[0], data[1], maxEpochs, maxHours, 5);
+        NetworkTrainer.earlyStoppingTrain(model, savedModelsPath, data[0], data[1], maxEpochs, maxHours, maxEpochsWithoutImprovement);
 
     }
 
     private static void trainModel2() {
         MultiLayerConfiguration conf = NetworkModels.getModel2(video_height, video_width, channels, nrOfCategories);
 
-        MultiLayerNetwork model = null;
+        MultiLayerNetwork model = new MultiLayerNetwork(conf);
         DataSetIterator[] data = null;
         try {
-            model = ModelHandler.loadModel("saved_models/model2it1.bin");
-            model.setListeners(new ScoreIterationListener(1));
+
             data = DataLoader.getNonSequentialData(nonSeqDataPath2,
-                    allowedExtensions, video_height, video_width, channels, 64, 90, nrOfCategories);
+                    allowedExtensions, video_height, video_width, channels, minibatchsize, 90, nrOfCategories);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        NetworkTrainer.earlyStoppingTrain(model, "saved_models", data[0], data[1], maxEpochs, maxHours, 5);
+        NetworkTrainer.earlyStoppingTrain(model, "saved_models", data[0], data[1], maxEpochs, maxHours, maxEpochsWithoutImprovement);
     }
 
     private static void trainModel3() {
@@ -108,72 +106,6 @@ public class VideoClassificationThesisProject {
                 maxEpochsWithoutImprovement);
     }
 
-    private static void trainModel4() {
-        MultiLayerConfiguration conf = NetworkModels.getModel4(video_height, video_width, channels, nrOfCategories,
-                nrOfFramesPerVideo);
-        MultiLayerNetwork model = new MultiLayerNetwork(conf);
-        model.init();
-        model.setListeners(new ScoreIterationListener(1));
-
-        DataSetIterator testingData = null, trainingData = null;
-        try {
-            testingData = DataLoader.getSequentialData(seqTestingDataPath, fileNameStandard, 0, 100, minibatchsize,
-                    startFrame, nrOfFramesPerVideo, video_height, video_width, nrOfCategories);
-
-            trainingData = DataLoader.getSequentialData(seqTrainingDataPath, fileNameStandard, 0, 1260, minibatchsize,
-                    startFrame, nrOfFramesPerVideo, video_height, video_width, nrOfCategories);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        NetworkTrainer.earlyStoppingTrain(model, savedModelsPath, trainingData, testingData, maxEpochs, maxHours,
-                maxEpochsWithoutImprovement);
-    }
-
-
-
-    private static void evaluateModelSeq() {
-        MultiLayerNetwork model = null;
-        DataSetIterator testingData = null, trainingData = null;
-        try {
-            testingData = DataLoader.getSequentialData(seqTestingDataPath, fileNameStandard, 0, 168, minibatchsize,
-                    startFrame, nrOfFramesPerVideo, video_height, video_width, nrOfCategories);
-
-            //trainingData = DataLoader.getSequentialData(seqTrainingDataPath, fileNameStandard, 0, 1260, minibatchsize,
-            //       startFrame, nrOfFramesPerVideo, video_height, video_width, nrOfCategories);
-            model = ModelHandler.loadModel("saved_models/bestModel.bin");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Evaluation eval = NetworkEvaluator.evaluate(model, testingData, true);
-        NetworkEvaluator.printAdvancedStats(eval, 4);
-        System.out.println(eval.stats());
-        // eval = NetworkEvaluator.evaluate(model, trainingData, labelMap, true);
-        // System.out.println(eval.stats());
-    }
-
-    private static void evaluateModelNonSeq(String pathModel) {
-        MultiLayerNetwork model = null;
-        DataSetIterator[] data = null;
-        try {
-            data = DataLoader.getNonSequentialData(nonSeqDataPath,
-                    allowedExtensions, video_height, video_width, channels, minibatchsize, 70, nrOfCategories);
-            model = ModelHandler.loadModel(pathModel);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println(model);
-        Evaluation eval = NetworkEvaluator.evaluate(model, data[1], false);
-        NetworkEvaluator.printAdvancedStats(eval, 4);
-        System.out.println(eval.stats());
-        eval = NetworkEvaluator.evaluate(model, data[0], false);
-        NetworkEvaluator.printAdvancedStats(eval, 4);
-        System.out.println(eval.stats());
-    }
-
     private static void evaluateVideoClips(boolean seqData) {
         int[] classifiedVideos = new int[nrOfCategories];
         int[][] correctlyClassifiedVideos = new int[nrOfCategories][nrOfCategories];
@@ -184,17 +116,12 @@ public class VideoClassificationThesisProject {
         MultiLayerNetwork nonSeqModel = null;
         try {
             seqModel = ModelHandler.loadModel("saved_models/model3it2.bin");
-            nonSeqModel = ModelHandler.loadModel("saved_models/model2it1.bin");
+            nonSeqModel = ModelHandler.loadModel("saved_models/model1it2.bin");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        double[] tp = new double[nrOfCategories];
-        double[] fp = new double[nrOfCategories];
-        double[] tn = new double[nrOfCategories];
-        double[] fn = new double[nrOfCategories];
-
-        for(int i = 0; i < 3465; i++) {
+        for(int i = 0; i < 500; i++) {
             String path = "video_data/sequential_data/training_data2/sportclip_" + i;
             File labelFile = new File(path + ".txt");
             BufferedReader br = null;
@@ -214,11 +141,6 @@ public class VideoClassificationThesisProject {
                 }
                 System.out.println("Video " + i + ", " + LabelMap.labelMap.get(category) + ": " + eval.recall());
 
-                fp[category] += eval.falsePositives().get(category);
-                tp[category] += eval.truePositives().get(category);
-                fn[category] += eval.falseNegatives().get(category);
-                tn[category] += eval.trueNegatives().get(category);
-
                 classifiedVideos[category]++;
                 int mostClassifiedCategory = NetworkEvaluator.getMostClassifiedCategory(eval, category, nrOfCategories);
                 correctlyClassifiedVideos[category][mostClassifiedCategory] ++;
@@ -231,20 +153,16 @@ public class VideoClassificationThesisProject {
                         correctlyClassifiedFrames[category][j] += eval.falsePositives().get(j);
                     }
                 }
-
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
-
 
         for(int i = 0; i < nrOfCategories; i++) {
             System.out.println();
             System.out.println("CATEGORY: " + LabelMap.labelMap.get(i));
-
 
             System.out.println("Nr of classified Videos: " + classifiedVideos[i]);
 
@@ -257,11 +175,7 @@ public class VideoClassificationThesisProject {
             for(int j = 0; j < nrOfCategories; j++) {
                 System.out.println("Nr of frames classified as " + LabelMap.labelMap.get(j) + ": " + correctlyClassifiedFrames[i][j]);
             }
-
-
         }
-
     }
-
 
 }

@@ -143,42 +143,4 @@ public class NetworkEvaluator {
         return bestCategory;
     }
 
-    public static void printAdvancedStats(Evaluation eval, int nrOfCategories) {
-
-        double precision, recall, accuracy, f1;
-        double precisionTotal = 0, recallTotal = 0, accuracyTotal = 0, f1Total = 0;
-        double tp, fp, tn, fn;
-
-        for(int i = 0; i < nrOfCategories; i++) {
-            tp = eval.truePositives().get(i);
-            fp = eval.falsePositives().get(i);
-            tn = eval.trueNegatives().get(i);
-            fn = eval.falseNegatives().get(i);
-            
-            precision = tp / (tp + fp);
-            recall = tp / (tp + fn);
-            accuracy = (tp + tn) / (tp + fp + tn + fn);
-            f1 = 2 * ((precision * recall) / (precision + recall));
-            System.out.println("CATEGORY " + LabelMap.labelMap.get(i) + " RESULTS:" +
-                    "\nPrecision: " + precision +
-                    "\nRecall: " + recall +
-                    "\nAccuracy: " + accuracy +
-                    "\nF1: " + f1 + "\n");
-            precisionTotal += precision;
-            accuracyTotal += accuracy;
-            recallTotal += recall;
-            f1Total += f1;
-        }
-
-
-        System.out.println("TOTALRESULTS:" +
-                "\nPrecision: " + precisionTotal / nrOfCategories +
-                "\nRecall: " + recallTotal / nrOfCategories +
-                "\nAccuracy: " + accuracyTotal / nrOfCategories +
-                "\nF1: " + f1Total / nrOfCategories + "\n");
-
-
-    }
-
-
 }

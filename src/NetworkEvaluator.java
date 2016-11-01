@@ -52,7 +52,7 @@ public class NetworkEvaluator {
      * @param nrOfFrames Nr of frames from the video that should be classified
      * @return The Evaluation Stats
      */
-    public static Evaluation evaluateVideoClipSeq(MultiLayerNetwork model, String path, int category, int startFrame, int nrOfFrames) {
+    public static Evaluation evaluateVideoClipSeq(MultiLayerNetwork model, String path, int category, int startFrame, int nrOfFrames, int nrOfCategories) {
         PrintWriter writer = null;
         DataSetIterator testData = null;
         /*Open file*/
@@ -72,7 +72,7 @@ public class NetworkEvaluator {
                 }
                 writer.close();
                 /*Load the data and the labels for testing*/
-                testData = DataLoader.getSequentialData(tmpSeqFolder, tmpName + "_%d", 0, 1, 1, startFrame, nrOfFrames, 224, 224, 4);
+                testData = DataLoader.getSequentialData(tmpSeqFolder, tmpName + "_%d", 0, 1, 1, startFrame, nrOfFrames, 224, 224, nrOfCategories);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -94,7 +94,8 @@ public class NetworkEvaluator {
      * @param nrOfFrames Nr of frames from the video that should be classified
      * @return The Evaluation Stats
      */
-    public static Evaluation evaluateVideoClipNonSeq(MultiLayerNetwork model, String path, int category, int startFrame, int nrOfFrames, int frameJump) {
+    public static Evaluation evaluateVideoClipNonSeq(MultiLayerNetwork model, String path, int category, int startFrame, int nrOfFrames, int frameJump
+    , int nrOfCategories) {
         PrintWriter writer = null;
         DataSetIterator testData = null;
         Evaluation eval = null;
@@ -111,7 +112,7 @@ public class NetworkEvaluator {
                     ImageIO.write(b, "bmp", outputFile);
                 }
                 DataSetIterator data = DataLoader.getNonSequentialData(tmpNonSeqFolder + LabelMap.labelMap.get(category), new String[] {"bmp"}, 224,
-                        224, 3, 10, 100, 4)[0];
+                        224, 3, 10, 100, nrOfCategories)[0];
                 eval = evaluate(model, data, false);
             } catch (IOException e) {
                 e.printStackTrace();

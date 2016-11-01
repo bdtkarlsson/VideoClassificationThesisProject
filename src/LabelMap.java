@@ -16,6 +16,14 @@ public class LabelMap {
         labels.add(1,"soccer");
         labels.add(2,"basketball");
         labels.add(3,"football");
+        labels.add(4, "golf");
+        labels.add(5, "swimming");
+        labels.add(6, "tennis");
+        labels.add(7, "skiing");
+        labels.add(8, "freshwaterfishing");
+        labels.add(9, "saltwaterfishing");
+        labels.add(10, "flyfishing");
+
 
         for(int i = 0; i < labels.size(); i++) {
             labelMap.put(i, labels.get(i));

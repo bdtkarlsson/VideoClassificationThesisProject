@@ -95,7 +95,8 @@ public class SequentialFramesRecordReader extends FileRecordReader implements Se
                     i.seekToFramePrecise(this.startFrame);
                 }
             } catch (JCodecException var8) {
-                System.err.println("1");
+                System.err.println("1, " + f.getName());
+
                 throw new RuntimeException(var8);
             }
 

@@ -17,7 +17,7 @@ public class VideoClassificationThesisProject {
     private static final int video_width = 224;
     private static final int channels = 3;
     private static final int minibatchsize = 16;
-    private static final int nrOfCategories = 4;
+    private static final int nrOfCategories = 11;
     private static final String savedModelsPath = "saved_models";
 
     /*Early stopping training parameters*/
@@ -33,16 +33,16 @@ public class VideoClassificationThesisProject {
     /*Sequential data parameters*/
     private static final int startFrame = 0;
     private static final int nrOfFramesPerVideo = 10;
-    private static final String seqTrainingDataPath = "video_data/sequential_data/training_data";
-    private static final String seqTestingDataPath = "video_data/sequential_data/testing_data";
-    private static final String fileNameStandard = "ssportclip2_%d";
+    private static final String seqTrainingDataPath = "video_data/sequential_data/training_data2";
+    private static final String seqTestingDataPath = "video_data/sequential_data/testing_data2";
+    private static final String fileNameStandard = "sportclip_%d";
 
     public static void main(String[] args) {
-        //evaluateVideoClips(true);
+        evaluateVideoClips(true);
         //evaluateModelSeq();
-        //evaluateModelNonSeq("saved_models2/bestModel.bin");
+        //evaluateModelNonSeq("saved_models/bestModel.bin");
          //trainModel1();
-        trainModel2();
+        //trainModel2();
         //trainModel4();
         //trainModel3();
         //trainModel2();
@@ -77,9 +77,7 @@ public class VideoClassificationThesisProject {
             model = ModelHandler.loadModel("saved_models/model2it1.bin");
             model.setListeners(new ScoreIterationListener(1));
             data = DataLoader.getNonSequentialData(nonSeqDataPath2,
-                    allowedExtensions, video_height, video_width, channels, minibatchsize, 90, nrOfCategories);
-            PrintStream out = new PrintStream(new FileOutputStream("output.txt"));
-            System.setOut(out);
+                    allowedExtensions, video_height, video_width, channels, 64, 90, nrOfCategories);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -96,10 +94,10 @@ public class VideoClassificationThesisProject {
 
         DataSetIterator testingData = null, trainingData = null;
         try {
-            testingData = DataLoader.getSequentialData(seqTestingDataPath, fileNameStandard, 0, 100, minibatchsize,
+            testingData = DataLoader.getSequentialData(seqTestingDataPath, fileNameStandard, 0, 462, minibatchsize,
                     startFrame, nrOfFramesPerVideo, video_height, video_width, nrOfCategories);
 
-            trainingData = DataLoader.getSequentialData(seqTrainingDataPath, fileNameStandard, 0, 1260, minibatchsize,
+            trainingData = DataLoader.getSequentialData(seqTrainingDataPath, fileNameStandard, 0, 3465, minibatchsize,
                     110, nrOfFramesPerVideo, video_height, video_width, nrOfCategories);
         } catch (IOException e) {
             e.printStackTrace();
@@ -182,14 +180,22 @@ public class VideoClassificationThesisProject {
 
         int[] classifiedFrames = new int[nrOfCategories];
         int[][] correctlyClassifiedFrames= new int[nrOfCategories][nrOfCategories];
+        MultiLayerNetwork seqModel = null;
+        MultiLayerNetwork nonSeqModel = null;
+        try {
+            seqModel = ModelHandler.loadModel("saved_models/model3it2.bin");
+            nonSeqModel = ModelHandler.loadModel("saved_models/model2it1.bin");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         double[] tp = new double[nrOfCategories];
         double[] fp = new double[nrOfCategories];
         double[] tn = new double[nrOfCategories];
         double[] fn = new double[nrOfCategories];
 
-        for(int i = 0; i < 1260; i++) {
-            String path = "video_data/sequential_data/training_data/ssportclip2_" + i;
+        for(int i = 0; i < 3465; i++) {
+            String path = "video_data/sequential_data/training_data2/sportclip_" + i;
             File labelFile = new File(path + ".txt");
             BufferedReader br = null;
             int category = -1;
@@ -200,11 +206,11 @@ public class VideoClassificationThesisProject {
                 category = Integer.parseInt(line);
                 Evaluation eval = null;
                 if(seqData) {
-                    eval = NetworkEvaluator.evaluateVideoClipSeq(ModelHandler.loadModel("saved_models/model3it1.bin"),
-                            path + ".mp4", category, 0, 10);
+                    eval = NetworkEvaluator.evaluateVideoClipSeq(seqModel,
+                            path + ".mp4", category, 0, 10, nrOfCategories);
                 } else {
-                    eval = NetworkEvaluator.evaluateVideoClipNonSeq(ModelHandler.loadModel("saved_models2/bestModel.bin"),
-                            path + ".mp4", category, 0, 10, 10);
+                    eval = NetworkEvaluator.evaluateVideoClipNonSeq(nonSeqModel,
+                            path + ".mp4", category, 0, 10, 10, nrOfCategories);
                 }
                 System.out.println("Video " + i + ", " + LabelMap.labelMap.get(category) + ": " + eval.recall());
 

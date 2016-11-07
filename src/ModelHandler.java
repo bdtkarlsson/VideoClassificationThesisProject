@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * Author: Daniel Karlsson c11dkn@cs.umu.se
+ *
  * Methods for saving and loading trained network models.
  */
 public class ModelHandler {

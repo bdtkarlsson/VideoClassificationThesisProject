@@ -39,7 +39,8 @@ public class NetworkTrainer {
     /**
      * Trains the model with the provided data until one of the termination conditions are met. The conditions provided
      * are max hours, max epochs and max epochs without improvement. The model will be constantly evaluated with testing
-     * data to be able to check the third termination condition. The best model will constantly be saved during training.
+     * data to be able to check the third termination condition. The best model will constantly be saved during
+     * training.
      * @param model The model to be trained
      * @param modelSavePath Path to where the best model will be saved
      * @param trainData The training data
@@ -49,17 +50,20 @@ public class NetworkTrainer {
      * @param maxEpochsWithoutImprovement Termination condition: max epochs without improvement
      * @return The trained model (best model)
      */
-    public static MultiLayerNetwork earlyStoppingTrain(MultiLayerNetwork model, String modelSavePath, DataSetIterator trainData,
-                                                       DataSetIterator testData, int maxEpochs,
-                                                       int maxHours, int maxEpochsWithoutImprovement) {
+    public static MultiLayerNetwork earlyStoppingTrain(MultiLayerNetwork model, String modelSavePath,
+                                                       DataSetIterator trainData, DataSetIterator testData,
+                                                       int maxEpochs, int maxHours, int maxEpochsWithoutImprovement) {
+
         EarlyStoppingConfiguration esConf = new EarlyStoppingConfiguration.Builder()
-                .epochTerminationConditions(new MaxEpochsTerminationCondition(maxEpochs), new ScoreImprovementEpochTerminationCondition(maxEpochsWithoutImprovement))
+                .epochTerminationConditions(new MaxEpochsTerminationCondition(maxEpochs),
+                        new ScoreImprovementEpochTerminationCondition(maxEpochsWithoutImprovement))
                 .iterationTerminationConditions(new MaxTimeIterationTerminationCondition(maxHours, TimeUnit.HOURS))
                 .scoreCalculator(new DataSetLossCalculator(testData, true))
 
                 .evaluateEveryNEpochs(1)
                 .modelSaver(new LocalFileModelSaver(modelSavePath))
                 .build();
+
         EarlyStoppingTrainer trainer = new EarlyStoppingTrainer(esConf, model, trainData);
         //Conduct early stopping training:
         EarlyStoppingResult result = trainer.fit();

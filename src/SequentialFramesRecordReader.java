@@ -41,10 +41,12 @@ import java.util.List;
  *
  * !NOTE!
  *
- * This is an updated version of the CodecRecordReader provided by DeepLearning4j copyrighted by Skymind, Inc. The original CodecRecordReader
- * used an old version of Jcodecs (1.5) which resulted in error when grabbing some frames. The new version (2.0)
- * depreceates the FrameGrab class and instead uses the FrameGrab8Bit class which is more stable and does not generate
- * error for some frames.
+ * Author: Daniel Karlsson c11dkn@cs.umu.se
+ *
+ * This is an updated version of the CodecRecordReader provided by DeepLearning4j copyrighted by Skymind, Inc. The
+ * original CodecRecordReader used an old version of Jcodecs (1.5) which resulted in error when grabbing some frames.
+ * The new version (2.0) depreceates the FrameGrab class and instead uses the FrameGrab8Bit class which is more stable
+ * and does not generate error for some frames.
  */
 public class SequentialFramesRecordReader extends FileRecordReader implements SequenceRecordReader {
     private int startFrame = 0;

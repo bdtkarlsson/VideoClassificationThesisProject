@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
+ * Author: Daniel Karlsson c11dkn@cs.umu.se
+ *
  * Method for evaluating a trained network
  */
 public class NetworkEvaluator {

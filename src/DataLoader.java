@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
+ * Author: Daniel Karlsson c11dkn@cs.umu.se
+ *
  * Class which contains methods for loading video frame data in DataSetIterator form. The sequential data is read
  * directly from video files and uses the JCodecs FrameGrab8Bit class to extract the frames. The non-sequential data
  * is read from frames directly (stored as image files).

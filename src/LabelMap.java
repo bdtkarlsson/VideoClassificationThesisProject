@@ -3,7 +3,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * label map and label list used in the evaluation of the network and the loading of non-sequential data
+ * Author: Daniel Karlsson c11dkn@cs.umu.se
+ *
+ * label map and label list used in the evaluation of the network and the loading of non-sequential data.
  */
 public class LabelMap {
 

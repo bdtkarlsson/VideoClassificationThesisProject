@@ -12,6 +12,9 @@ import org.nd4j.linalg.lossfunctions.LossFunctions;
 import java.util.Random;
 
 /**
+ *
+ * Author: Daniel Karlsson c11dkn@cs.umu.se
+ *
  * Class containing the network models.
  * Model 1 is a simple CNN model.
  * Model 2 is implementation of the AlexNet (http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
@@ -242,6 +245,129 @@ public class NetworkModels {
 
         return conf.build();
 
+    }
+
+    public static MultiLayerConfiguration getModel4(int video_height, int video_width, int channels, int nrOfOutputs, int nrOfFrames) {
+
+        Updater updater = Updater.RMSPROP;
+        MultiLayerConfiguration.Builder conf = new NeuralNetConfiguration.Builder()
+                .seed(23432445)
+                .regularization(true).l2(0.001) //l2 regularization on all layers
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .iterations(1)
+                .learningRate(0.001)
+                .momentum(0.9)
+                .list()
+
+                .layer(0, new ConvolutionLayer.Builder()
+                        .nIn(channels)
+                        .nOut(32)
+                        .kernelSize(14, 14)
+                        .stride(7, 7)
+                        .activation("relu")
+                        .weightInit(WeightInit.RELU)
+                        .updater(updater)
+                        .build())
+                .layer(1, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
+                        .kernelSize(3, 3)
+                        .stride(2, 2).build())
+                .layer(2, new ConvolutionLayer.Builder()
+                        .nIn(32)
+                        .nOut(64)
+                        .kernelSize(3, 3)
+                        .stride(2, 2)
+                        .activation("relu")
+                        .weightInit(WeightInit.RELU)
+                        .updater(updater)
+                        .build())
+                .layer(3, new DenseLayer.Builder()
+                        .activation("relu")
+                        .nIn(3136)
+                        .nOut(128)
+                        .weightInit(WeightInit.RELU)
+                        .updater(updater)
+                        .gradientNormalization(GradientNormalization.ClipElementWiseAbsoluteValue)
+                        .gradientNormalizationThreshold(10)
+                        .learningRate(0.001)
+                        .build())
+                .layer(4, new GravesLSTM.Builder()
+                        .activation("softsign")
+                        .nIn(128)
+                        .nOut(64)
+                        .weightInit(WeightInit.XAVIER)
+                        .updater(updater)
+                        .gradientNormalization(GradientNormalization.ClipElementWiseAbsoluteValue)
+                        .gradientNormalizationThreshold(10)
+                        .learningRate(0.001)
+                        .build())
+                .layer(5, new RnnOutputLayer.Builder(LossFunctions.LossFunction.MCXENT)
+                        .activation("softmax")
+                        .nIn(64)
+                        .nOut(nrOfOutputs)
+                        .updater(updater)
+                        .weightInit(WeightInit.XAVIER)
+                        .gradientNormalization(GradientNormalization.ClipElementWiseAbsoluteValue)
+                        .gradientNormalizationThreshold(10)
+                        .build())
+                .inputPreProcessor(0, new RnnToCnnPreProcessor(video_height, video_width, channels))
+                .inputPreProcessor(3, new CnnToFeedForwardPreProcessor(7, 7, 64))
+                .inputPreProcessor(4, new FeedForwardToRnnPreProcessor())
+                .pretrain(false).backprop(true);
+
+        return conf.build();
+
+    }
+
+    public static MultiLayerConfiguration getModel5(int video_height, int video_width, int channels, int nrOfCategories) {
+
+        Random rand = new Random();
+
+        SubsamplingLayer.PoolingType poolingType = SubsamplingLayer.PoolingType.MAX;
+
+        MultiLayerConfiguration.Builder conf = new NeuralNetConfiguration.Builder()
+                .seed(rand.nextInt(10000))
+                .weightInit(WeightInit.DISTRIBUTION)
+                .dist(new NormalDistribution(0.0, 0.01))
+                .activation("relu")
+                .updater(Updater.NESTEROVS)
+                .iterations(1)
+                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer) // normalize to prevent vanishing or exploding gradients
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .learningRate(0.001)
+                .regularization(true).l2(0.0005)
+                .momentum(0.9)
+                .miniBatch(false)
+                .list()
+                .layer(0, new ConvolutionLayer.Builder(new int[]{14, 14}, new int[]{7, 7})
+                        .name("conv1")
+                        .nIn(channels)
+                        .nOut(32)
+                        .build())
+                .layer(1, new SubsamplingLayer.Builder(poolingType, new int[]{3, 3}, new int[]{2, 2})
+                        .name("maxpool1")
+                        .build())
+                .layer(2, new ConvolutionLayer.Builder(new int[]{3, 3}, new int[]{2,2})
+                        .name("conv2")
+                        .nOut(64)
+                        .build())
+                .layer(3, new DenseLayer.Builder()
+                        .name("fc1")
+                        .nOut(128)
+                        .build())
+                .layer(4, new DenseLayer.Builder()
+                        .name("fc1")
+                        .nOut(64)
+                        .build())
+                .layer(5, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                        .name("output")
+                        .nOut(nrOfCategories)
+                        .activation("softmax")
+                        .build())
+                .backprop(true)
+                .pretrain(false)
+                .cnnInputSize(video_height, video_width, channels);
+
+        return conf.build();
     }
 
 }

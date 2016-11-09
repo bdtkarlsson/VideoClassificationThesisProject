@@ -32,7 +32,7 @@ public class NetworkModels {
      * @param nrOfCategories The number of categories in the data
      * @return The model configuration
      */
-    public static MultiLayerConfiguration getModel1(int video_height, int video_width, int channels, int nrOfCategories) {
+    public static MultiLayerConfiguration getModel1old(int video_height, int video_width, int channels, int nrOfCategories) {
 
         Random rand = new Random();
 
@@ -173,7 +173,7 @@ public class NetworkModels {
         return conf.build();
     }
 
-    public static MultiLayerConfiguration getModel3(int video_height, int video_width, int channels, int nrOfOutputs, int nrOfFrames) {
+    public static MultiLayerConfiguration getModel3old(int video_height, int video_width, int channels, int nrOfOutputs, int nrOfFrames) {
 
         Updater updater = Updater.RMSPROP;
         MultiLayerConfiguration.Builder conf = new NeuralNetConfiguration.Builder()
@@ -247,7 +247,7 @@ public class NetworkModels {
 
     }
 
-    public static MultiLayerConfiguration getModel4(int video_height, int video_width, int channels, int nrOfOutputs, int nrOfFrames) {
+    public static MultiLayerConfiguration getModel3(int video_height, int video_width, int channels, int nrOfOutputs, int nrOfFrames) {
 
         Updater updater = Updater.RMSPROP;
         MultiLayerConfiguration.Builder conf = new NeuralNetConfiguration.Builder()
@@ -318,7 +318,7 @@ public class NetworkModels {
 
     }
 
-    public static MultiLayerConfiguration getModel5(int video_height, int video_width, int channels, int nrOfCategories) {
+    public static MultiLayerConfiguration getModel1(int video_height, int video_width, int channels, int nrOfCategories) {
 
         Random rand = new Random();
 

@@ -59,7 +59,7 @@ public class NetworkTrainer {
                         new ScoreImprovementEpochTerminationCondition(maxEpochsWithoutImprovement))
                 .iterationTerminationConditions(new MaxTimeIterationTerminationCondition(maxHours, TimeUnit.HOURS))
                 .scoreCalculator(new DataSetLossCalculator(testData, true))
-
+                .saveLastModel(true)
                 .evaluateEveryNEpochs(1)
                 .modelSaver(new LocalFileModelSaver(modelSavePath))
                 .build();

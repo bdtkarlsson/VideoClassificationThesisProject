@@ -15,8 +15,8 @@ public class VideoClassificationThesisProject {
     private static final int video_height = 224;
     private static final int video_width = 224;
     private static final int channels = 3;
-    private static final int minibatchsize = 16;
-    private static final int nrOfCategories = 4;
+    private static final int minibatchsize = 64;
+    private static final int nrOfCategories = 11;
     private static final String savedModelsPath = "saved_models";
 
     /*Early stopping training parameters*/
@@ -37,21 +37,27 @@ public class VideoClassificationThesisProject {
     private static final String fileNameStandard = "ssportclip2_%d";
 
     public static void main(String[] args) {
-        //evaluateVideoClips(true);
+        //evaluateVideoClips(false);
         //evaluateModelSeq();
         //evaluateModelNonSeq("saved_models/bestModel.bin");
-        //trainModel1();
+        trainModel1();
         //trainModel2();
-        trainModel4();
+        //trainModel4();
         //trainModel3();
         //trainModel2();
 
     }
 
-    private static void trainModel1() {
-        MultiLayerConfiguration conf = NetworkModels.getModel1(video_height, video_width, channels, nrOfCategories);
-        MultiLayerNetwork model = new MultiLayerNetwork(conf);
-        model.init();
+    private static void trainModel1() { //it 1: 30 epochs 2 hours. it2: 15h 72 epochs 13:38
+      //  MultiLayerConfiguration conf = NetworkModels.getModel1(video_height, video_width, channels, nrOfCategories);
+      //  MultiLayerNetwork model = new MultiLayerNetwork(conf);
+      //  model.init();
+        MultiLayerNetwork model = null;
+        try {
+            model = ModelHandler.loadModel("saved_models2/model1it2.bin");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         model.setListeners(new ScoreIterationListener(1), new HistogramIterationListener(1));
 
 
@@ -63,7 +69,7 @@ public class VideoClassificationThesisProject {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        NetworkTrainer.earlyStoppingTrain(model, savedModelsPath, data[0], data[1], maxEpochs, maxHours, maxEpochsWithoutImprovement);
+        NetworkTrainer.earlyStoppingTrain(model, "saved_models2", data[0], data[1], maxEpochs, maxHours, maxEpochsWithoutImprovement);
 
     }
 
@@ -108,16 +114,17 @@ public class VideoClassificationThesisProject {
                 maxEpochsWithoutImprovement);
     }
 
-    private static void trainModel4() { //08:40
-        MultiLayerConfiguration conf = NetworkModels.getModel4(video_height, video_width, channels, nrOfCategories,
-                nrOfFramesPerVideo);
+    private static void trainModel4() { //6h 31 32 epochs 13:05
+        MultiLayerConfiguration conf = NetworkModels.getModel3(video_height, video_width, channels, nrOfCategories,
+               nrOfFramesPerVideo);
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
         model.init();
+
         model.setListeners(new ScoreIterationListener(1), new HistogramIterationListener(1));
 
         DataSetIterator testingData = null, trainingData = null;
         try {
-            testingData = DataLoader.getSequentialData(seqTestingDataPath, fileNameStandard, 0, 168, minibatchsize,
+            testingData = DataLoader.getSequentialData(seqTrainingDataPath, fileNameStandard, 0, 200, minibatchsize,
                     startFrame, nrOfFramesPerVideo, video_height, video_width, nrOfCategories);
 
             trainingData = DataLoader.getSequentialData(seqTrainingDataPath, fileNameStandard, 0, 1260, minibatchsize,
@@ -140,14 +147,14 @@ public class VideoClassificationThesisProject {
         MultiLayerNetwork seqModel = null;
         MultiLayerNetwork nonSeqModel = null;
         try {
-            seqModel = ModelHandler.loadModel("saved_models2/bestModel.bin");
-            nonSeqModel = ModelHandler.loadModel("saved_models/model1it2.bin");
+            seqModel = ModelHandler.loadModel("saved_models2/latestModel.bin");
+            nonSeqModel = ModelHandler.loadModel("saved_models2/model1it2.bin");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        for(int i = 0; i < 1260; i++) {
-            String path = "video_data/sequential_data/training_data/ssportclip2_" + i;
+        for(int i = 0; i < 3465; i++) {
+            String path = "video_data/sequential_data/training_data2/sportclip_" + i;
             File labelFile = new File(path + ".txt");
             BufferedReader br = null;
             int category = -1;

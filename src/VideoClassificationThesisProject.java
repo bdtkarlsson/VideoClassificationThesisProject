@@ -37,10 +37,10 @@ public class VideoClassificationThesisProject {
     private static final String fileNameStandard = "ssportclip2_%d";
 
     public static void main(String[] args) {
-        //evaluateVideoClips(false);
+        evaluateVideoClips(false);
         //evaluateModelSeq();
         //evaluateModelNonSeq("saved_models/bestModel.bin");
-        trainModel1();
+       // trainModel1();
         //trainModel2();
         //trainModel4();
         //trainModel3();
@@ -147,8 +147,8 @@ public class VideoClassificationThesisProject {
         MultiLayerNetwork seqModel = null;
         MultiLayerNetwork nonSeqModel = null;
         try {
-            seqModel = ModelHandler.loadModel("saved_models2/latestModel.bin");
-            nonSeqModel = ModelHandler.loadModel("saved_models2/model1it2.bin");
+            seqModel = ModelHandler.loadModel("saved_models2/model3it2b.bin");
+            nonSeqModel = ModelHandler.loadModel("saved_models2/bestModel.bin");
         } catch (IOException e) {
             e.printStackTrace();
         }

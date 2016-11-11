@@ -17,6 +17,10 @@
 *.txt
 *.iml
 
+#too big
+model2it1.bin
+model2it2.bin
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hot
 hs_err_pid*
 

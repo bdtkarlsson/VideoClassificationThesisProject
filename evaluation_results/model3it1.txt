@@ -1,0 +1,47 @@
+CATEGORY: icehockey
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 279
+Nr of videos classified as soccer: 6
+Nr of videos classified as basketball: 26
+Nr of videos classified as football: 4
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 2760
+Nr of frames classified as soccer: 73
+Nr of frames classified as basketball: 271
+Nr of frames classified as football: 46
+
+CATEGORY: soccer
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 2
+Nr of videos classified as soccer: 302
+Nr of videos classified as basketball: 6
+Nr of videos classified as football: 5
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 28
+Nr of frames classified as soccer: 3011
+Nr of frames classified as basketball: 57
+Nr of frames classified as football: 54
+
+CATEGORY: basketball
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 5
+Nr of videos classified as soccer: 3
+Nr of videos classified as basketball: 305
+Nr of videos classified as football: 2
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 81
+Nr of frames classified as soccer: 34
+Nr of frames classified as basketball: 3021
+Nr of frames classified as football: 14
+
+CATEGORY: football
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 15
+Nr of videos classified as soccer: 20
+Nr of videos classified as basketball: 43
+Nr of videos classified as football: 237
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 142
+Nr of frames classified as soccer: 199
+Nr of frames classified as basketball: 464
+Nr of frames classified as football: 2345

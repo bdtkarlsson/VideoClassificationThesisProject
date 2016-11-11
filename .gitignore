@@ -14,8 +14,8 @@
 #
 *.mp4
 *.bmp
-*.txt
 *.iml
+*sportclip*
 
 #too big
 model2it1.bin

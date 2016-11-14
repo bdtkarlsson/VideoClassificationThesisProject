@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class NetworkTrainer {
 
-
     /**
      * Trains a model with the provided data for the selected number of epochs
      *
@@ -70,8 +69,5 @@ public class NetworkTrainer {
 
         return (MultiLayerNetwork) result.getBestModel();
     }
-
-
-
 
 }

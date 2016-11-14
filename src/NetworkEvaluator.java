@@ -47,7 +47,7 @@ public class NetworkEvaluator {
     }
 
     /**
-     * Evaluate a video clip with a sequential model (e.g. LRCN)
+     * Evaluate a video clip with a sequential (recurrent) model (e.g. LRCN)
      * @param model Model to be used in the classification
      * @param path Path to the video
      * @param category The correct category of the video
@@ -89,7 +89,7 @@ public class NetworkEvaluator {
     }
 
     /**
-     * Evaluate a video clip with a non-sequential model (e.g. CNN)
+     * Evaluate a video clip with a non-sequential model (e.g. standard CNN)
      * @param model Model to be used in the classification
      * @param path Path to the video
      * @param category The correct category of the video

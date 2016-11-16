@@ -1,0 +1,286 @@
+CATEGORY: icehockey
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 233
+Nr of videos classified as soccer: 6
+Nr of videos classified as basketball: 8
+Nr of videos classified as football: 14
+Nr of videos classified as golf: 0
+Nr of videos classified as swimming: 0
+Nr of videos classified as tennis: 4
+Nr of videos classified as skiing: 37
+Nr of videos classified as freshwaterfishing: 3
+Nr of videos classified as saltwaterfishing: 3
+Nr of videos classified as flyfishing: 7
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 2130
+Nr of frames classified as soccer: 64
+Nr of frames classified as basketball: 91
+Nr of frames classified as football: 192
+Nr of frames classified as golf: 3
+Nr of frames classified as swimming: 2
+Nr of frames classified as tennis: 42
+Nr of frames classified as skiing: 441
+Nr of frames classified as freshwaterfishing: 62
+Nr of frames classified as saltwaterfishing: 36
+Nr of frames classified as flyfishing: 87
+
+CATEGORY: soccer
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 4
+Nr of videos classified as soccer: 243
+Nr of videos classified as basketball: 6
+Nr of videos classified as football: 13
+Nr of videos classified as golf: 20
+Nr of videos classified as swimming: 0
+Nr of videos classified as tennis: 7
+Nr of videos classified as skiing: 11
+Nr of videos classified as freshwaterfishing: 5
+Nr of videos classified as saltwaterfishing: 3
+Nr of videos classified as flyfishing: 3
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 70
+Nr of frames classified as soccer: 2046
+Nr of frames classified as basketball: 150
+Nr of frames classified as football: 247
+Nr of frames classified as golf: 218
+Nr of frames classified as swimming: 14
+Nr of frames classified as tennis: 91
+Nr of frames classified as skiing: 136
+Nr of frames classified as freshwaterfishing: 75
+Nr of frames classified as saltwaterfishing: 50
+Nr of frames classified as flyfishing: 53
+
+CATEGORY: basketball
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 8
+Nr of videos classified as soccer: 6
+Nr of videos classified as basketball: 267
+Nr of videos classified as football: 11
+Nr of videos classified as golf: 0
+Nr of videos classified as swimming: 0
+Nr of videos classified as tennis: 2
+Nr of videos classified as skiing: 9
+Nr of videos classified as freshwaterfishing: 7
+Nr of videos classified as saltwaterfishing: 4
+Nr of videos classified as flyfishing: 1
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 97
+Nr of frames classified as soccer: 88
+Nr of frames classified as basketball: 2378
+Nr of frames classified as football: 214
+Nr of frames classified as golf: 0
+Nr of frames classified as swimming: 4
+Nr of frames classified as tennis: 59
+Nr of frames classified as skiing: 116
+Nr of frames classified as freshwaterfishing: 97
+Nr of frames classified as saltwaterfishing: 74
+Nr of frames classified as flyfishing: 23
+
+CATEGORY: football
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 15
+Nr of videos classified as soccer: 25
+Nr of videos classified as basketball: 14
+Nr of videos classified as football: 215
+Nr of videos classified as golf: 7
+Nr of videos classified as swimming: 2
+Nr of videos classified as tennis: 5
+Nr of videos classified as skiing: 10
+Nr of videos classified as freshwaterfishing: 8
+Nr of videos classified as saltwaterfishing: 6
+Nr of videos classified as flyfishing: 8
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 193
+Nr of frames classified as soccer: 293
+Nr of frames classified as basketball: 173
+Nr of frames classified as football: 1814
+Nr of frames classified as golf: 70
+Nr of frames classified as swimming: 24
+Nr of frames classified as tennis: 77
+Nr of frames classified as skiing: 128
+Nr of frames classified as freshwaterfishing: 150
+Nr of frames classified as saltwaterfishing: 124
+Nr of frames classified as flyfishing: 104
+
+CATEGORY: golf
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 13
+Nr of videos classified as soccer: 23
+Nr of videos classified as basketball: 4
+Nr of videos classified as football: 21
+Nr of videos classified as golf: 165
+Nr of videos classified as swimming: 0
+Nr of videos classified as tennis: 17
+Nr of videos classified as skiing: 19
+Nr of videos classified as freshwaterfishing: 26
+Nr of videos classified as saltwaterfishing: 16
+Nr of videos classified as flyfishing: 11
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 118
+Nr of frames classified as soccer: 238
+Nr of frames classified as basketball: 35
+Nr of frames classified as football: 276
+Nr of frames classified as golf: 1432
+Nr of frames classified as swimming: 12
+Nr of frames classified as tennis: 201
+Nr of frames classified as skiing: 238
+Nr of frames classified as freshwaterfishing: 264
+Nr of frames classified as saltwaterfishing: 199
+Nr of frames classified as flyfishing: 137
+
+CATEGORY: swimming
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 0
+Nr of videos classified as soccer: 2
+Nr of videos classified as basketball: 1
+Nr of videos classified as football: 6
+Nr of videos classified as golf: 0
+Nr of videos classified as swimming: 283
+Nr of videos classified as tennis: 1
+Nr of videos classified as skiing: 14
+Nr of videos classified as freshwaterfishing: 4
+Nr of videos classified as saltwaterfishing: 3
+Nr of videos classified as flyfishing: 1
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 32
+Nr of frames classified as soccer: 14
+Nr of frames classified as basketball: 14
+Nr of frames classified as football: 50
+Nr of frames classified as golf: 4
+Nr of frames classified as swimming: 2757
+Nr of frames classified as tennis: 13
+Nr of frames classified as skiing: 164
+Nr of frames classified as freshwaterfishing: 48
+Nr of frames classified as saltwaterfishing: 37
+Nr of frames classified as flyfishing: 17
+
+CATEGORY: tennis
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 13
+Nr of videos classified as soccer: 5
+Nr of videos classified as basketball: 19
+Nr of videos classified as football: 9
+Nr of videos classified as golf: 8
+Nr of videos classified as swimming: 1
+Nr of videos classified as tennis: 230
+Nr of videos classified as skiing: 10
+Nr of videos classified as freshwaterfishing: 11
+Nr of videos classified as saltwaterfishing: 5
+Nr of videos classified as flyfishing: 4
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 163
+Nr of frames classified as soccer: 62
+Nr of frames classified as basketball: 197
+Nr of frames classified as football: 152
+Nr of frames classified as golf: 90
+Nr of frames classified as swimming: 5
+Nr of frames classified as tennis: 2008
+Nr of frames classified as skiing: 161
+Nr of frames classified as freshwaterfishing: 161
+Nr of frames classified as saltwaterfishing: 73
+Nr of frames classified as flyfishing: 78
+
+CATEGORY: skiing
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 47
+Nr of videos classified as soccer: 2
+Nr of videos classified as basketball: 6
+Nr of videos classified as football: 16
+Nr of videos classified as golf: 0
+Nr of videos classified as swimming: 1
+Nr of videos classified as tennis: 4
+Nr of videos classified as skiing: 215
+Nr of videos classified as freshwaterfishing: 13
+Nr of videos classified as saltwaterfishing: 0
+Nr of videos classified as flyfishing: 11
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 541
+Nr of frames classified as soccer: 26
+Nr of frames classified as basketball: 99
+Nr of frames classified as football: 172
+Nr of frames classified as golf: 2
+Nr of frames classified as swimming: 12
+Nr of frames classified as tennis: 42
+Nr of frames classified as skiing: 1929
+Nr of frames classified as freshwaterfishing: 119
+Nr of frames classified as saltwaterfishing: 51
+Nr of frames classified as flyfishing: 157
+
+CATEGORY: freshwaterfishing
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 9
+Nr of videos classified as soccer: 2
+Nr of videos classified as basketball: 0
+Nr of videos classified as football: 2
+Nr of videos classified as golf: 3
+Nr of videos classified as swimming: 1
+Nr of videos classified as tennis: 1
+Nr of videos classified as skiing: 12
+Nr of videos classified as freshwaterfishing: 194
+Nr of videos classified as saltwaterfishing: 30
+Nr of videos classified as flyfishing: 61
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 112
+Nr of frames classified as soccer: 27
+Nr of frames classified as basketball: 5
+Nr of frames classified as football: 47
+Nr of frames classified as golf: 27
+Nr of frames classified as swimming: 5
+Nr of frames classified as tennis: 16
+Nr of frames classified as skiing: 138
+Nr of frames classified as freshwaterfishing: 1707
+Nr of frames classified as saltwaterfishing: 397
+Nr of frames classified as flyfishing: 669
+
+CATEGORY: saltwaterfishing
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 6
+Nr of videos classified as soccer: 0
+Nr of videos classified as basketball: 2
+Nr of videos classified as football: 1
+Nr of videos classified as golf: 0
+Nr of videos classified as swimming: 3
+Nr of videos classified as tennis: 0
+Nr of videos classified as skiing: 12
+Nr of videos classified as freshwaterfishing: 66
+Nr of videos classified as saltwaterfishing: 135
+Nr of videos classified as flyfishing: 90
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 70
+Nr of frames classified as soccer: 4
+Nr of frames classified as basketball: 18
+Nr of frames classified as football: 14
+Nr of frames classified as golf: 8
+Nr of frames classified as swimming: 35
+Nr of frames classified as tennis: 6
+Nr of frames classified as skiing: 162
+Nr of frames classified as freshwaterfishing: 599
+Nr of frames classified as saltwaterfishing: 1283
+Nr of frames classified as flyfishing: 951
+
+CATEGORY: flyfishing
+Nr of classified Videos: 315
+Nr of videos classified as icehockey: 14
+Nr of videos classified as soccer: 16
+Nr of videos classified as basketball: 0
+Nr of videos classified as football: 22
+Nr of videos classified as golf: 3
+Nr of videos classified as swimming: 0
+Nr of videos classified as tennis: 1
+Nr of videos classified as skiing: 13
+Nr of videos classified as freshwaterfishing: 53
+Nr of videos classified as saltwaterfishing: 48
+Nr of videos classified as flyfishing: 145
+Nr of classified frames: 3150
+Nr of frames classified as icehockey: 170
+Nr of frames classified as soccer: 143
+Nr of frames classified as basketball: 7
+Nr of frames classified as football: 198
+Nr of frames classified as golf: 28
+Nr of frames classified as swimming: 3
+Nr of frames classified as tennis: 12
+Nr of frames classified as skiing: 149
+Nr of frames classified as freshwaterfishing: 527
+Nr of frames classified as saltwaterfishing: 555
+Nr of frames classified as flyfishing: 1358
+

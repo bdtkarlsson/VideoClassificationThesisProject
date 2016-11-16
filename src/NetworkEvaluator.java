@@ -24,6 +24,8 @@ public class NetworkEvaluator {
     private static final String tmpSeqFolder = "video_data/sequential_data/tmp_data/";
     private static final String tmpName = "video";
     private static final String tmpNonSeqFolder = "video_data/nonsequential_data/tmp_data/";
+    private static final int height = 168;
+    private static final int width = 168;
 
     /**
      *
@@ -74,7 +76,7 @@ public class NetworkEvaluator {
                 }
                 writer.close();
                 /*Load the data and the labels for testing*/
-                testData = DataLoader.getSequentialData(tmpSeqFolder, tmpName + "_%d", 0, 1, 1, startFrame, nrOfFrames, 224, 224, nrOfCategories);
+                testData = DataLoader.getSequentialData(tmpSeqFolder, tmpName + "_%d", 0, 1, 1, startFrame, nrOfFrames, height, width, nrOfCategories);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -113,8 +115,8 @@ public class NetworkEvaluator {
                     File outputFile = new File(tmpNonSeqFolder + LabelMap.labelMap.get(category) + "/img_" + i + ".bmp");
                     ImageIO.write(b, "bmp", outputFile);
                 }
-                DataSetIterator data = DataLoader.getNonSequentialData(tmpNonSeqFolder + LabelMap.labelMap.get(category), new String[] {"bmp"}, 224,
-                        224, 3, 10, 100, nrOfCategories)[0];
+                DataSetIterator data = DataLoader.getNonSequentialData(tmpNonSeqFolder + LabelMap.labelMap.get(category), new String[] {"bmp"}, height,
+                        width, 3, 10, 100, nrOfCategories)[0];
                 eval = evaluate(model, data, false);
             } catch (IOException e) {
                 e.printStackTrace();

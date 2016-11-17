@@ -20,8 +20,8 @@ public class VideoClassificationThesisProject {
     private static final String savedModelsPath = "saved_models";
 
     /*Early stopping training parameters*/
-    private static final int maxEpochs = 37;
-    private static final int maxHours = 15;
+    private static final int maxEpochs = 6;
+    private static final int maxHours = 1500;
     private static final int maxEpochsWithoutImprovement = 5;
 
     /*Non-sequential data parameters*/
@@ -37,21 +37,21 @@ public class VideoClassificationThesisProject {
     private static final String fileNameStandard = "sportclip_%d";
 
     public static void main(String[] args) {
-        evaluateVideoClips(false);
+      //  evaluateVideoClips(true);
         //evaluateModelSeq();
         //evaluateModelNonSeq("saved_models/bestModel.bin");
-       //trainModel1();
-        //trainModel2();
+        //trainModel1();
+        trainModel2();
         //trainModel4();
-       // trainModel3();
+        //trainModel3();
         //trainModel2();
 
     }
 
     private static void trainModel1() { // 6.5h 72 epochs
-      //  MultiLayerConfiguration conf = NetworkModels.getModel1(video_height, video_width, channels, nrOfCategories);
-      //  MultiLayerNetwork model = new MultiLayerNetwork(conf);
-      //  model.init();
+        //  MultiLayerConfiguration conf = NetworkModels.getModel1(video_height, video_width, channels, nrOfCategories);
+        //  MultiLayerNetwork model = new MultiLayerNetwork(conf);
+        //  model.init();
         MultiLayerNetwork model = null;
         try {
             model = ModelHandler.loadModel("saved_models/model1it3.bin");
@@ -73,23 +73,17 @@ public class VideoClassificationThesisProject {
 
     }
 
-    private static void trainModel2() { //08:03 170h  6 epochs
-       // MultiLayerConfiguration conf = NetworkModels.getModel2(video_height, video_width, channels, nrOfCategories);
+    private static void trainModel2() { //10:43 17/11
+        MultiLayerConfiguration conf = NetworkModels.getModel2(video_height, video_width, channels, nrOfCategories);
 
-        //MultiLayerNetwork model = new MultiLayerNetwork(conf);
-        //model.init();
-        MultiLayerNetwork model = null;
-        try {
-            model = ModelHandler.loadModel("saved_models/model2it2.bin");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        MultiLayerNetwork model = new MultiLayerNetwork(conf);
+        model.init();
         model.setListeners(new ScoreIterationListener(1));
         DataSetIterator[] data = null;
         try {
 
             data = DataLoader.getNonSequentialData(nonSeqDataPath2,
-                    allowedExtensions, video_height, video_width, channels, 64, 90, nrOfCategories);
+                    allowedExtensions, video_height, video_width, channels, 16, 90, nrOfCategories);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,7 +91,7 @@ public class VideoClassificationThesisProject {
         NetworkTrainer.earlyStoppingTrain(model, "saved_models", data[0], data[1], maxEpochs, maxHours, maxEpochsWithoutImprovement);
     }
 
-    private static void trainModel3() { //11:55 14/11 14h 59
+    private static void trainModel3() {
         MultiLayerConfiguration conf = NetworkModels.getModel3downscaled(video_height, video_width, channels, nrOfCategories,
                 nrOfFramesPerVideo);
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
@@ -147,25 +141,66 @@ public class VideoClassificationThesisProject {
                 line = br.readLine();
                 category = Integer.parseInt(line);
                 Evaluation eval = null;
+                Evaluation eval2 = null;
+                Evaluation eval3 = null;
+                Evaluation eval4 = null;
+                Evaluation eval5 = null;
                 if(seqData) {
                     eval = NetworkEvaluator.evaluateVideoClipSeq(seqModel,
-                            path + ".mp4", category, 0, 50, nrOfCategories);
+                            path + ".mp4", category, 0, 10, nrOfCategories);
+                    eval2 = NetworkEvaluator.evaluateVideoClipSeq(seqModel,
+                            path + ".mp4", category, 30, 10, nrOfCategories);
+                    eval3 = NetworkEvaluator.evaluateVideoClipSeq(seqModel,
+                            path + ".mp4", category, 50, 10, nrOfCategories);
+                    eval4 = NetworkEvaluator.evaluateVideoClipSeq(seqModel,
+                            path + ".mp4", category, 70, 10, nrOfCategories);
+                    eval5 = NetworkEvaluator.evaluateVideoClipSeq(seqModel,
+                            path + ".mp4", category, 90, 10, nrOfCategories);
                 } else {
                     eval = NetworkEvaluator.evaluateVideoClipNonSeq(nonSeqModel,
-                            path + ".mp4", category, 0, 30, 5, nrOfCategories);
+                            path + ".mp4", category, 0, 50, 3, nrOfCategories);
                 }
                 System.out.println("Video " + i + ", " + LabelMap.labelMap.get(category) + ": " + eval.recall());
+                if(seqData) {
+                    System.out.println("Video " + i + ", " + LabelMap.labelMap.get(category) + ": " + eval2.recall());
+                    System.out.println("Video " + i + ", " + LabelMap.labelMap.get(category) + ": " + eval3.recall());
+                    System.out.println("Video " + i + ", " + LabelMap.labelMap.get(category) + ": " + eval4.recall());
+                    System.out.println("Video " + i + ", " + LabelMap.labelMap.get(category) + ": " + eval5.recall());
+                }
 
                 classifiedVideos[category]++;
-                int mostClassifiedCategory = NetworkEvaluator.getMostClassifiedCategory(eval, category, nrOfCategories);
-                correctlyClassifiedVideos[category][mostClassifiedCategory] ++;
 
-                classifiedFrames[category] += 10;
+                if(seqData) {
+                    int[] mostClassifiedCategory = new int[5];
+                    mostClassifiedCategory[0] = NetworkEvaluator.getMostClassifiedCategory(eval, category, nrOfCategories);
+                    mostClassifiedCategory[1] = NetworkEvaluator.getMostClassifiedCategory(eval2, category, nrOfCategories);
+                    mostClassifiedCategory[2] = NetworkEvaluator.getMostClassifiedCategory(eval3, category, nrOfCategories);
+                    mostClassifiedCategory[3] = NetworkEvaluator.getMostClassifiedCategory(eval4, category, nrOfCategories);
+                    mostClassifiedCategory[4] = NetworkEvaluator.getMostClassifiedCategory(eval5, category, nrOfCategories);
+                    correctlyClassifiedVideos[category][getPopularElement(mostClassifiedCategory)]++;
+                } else{
+                    int mostClassifiedCategory = NetworkEvaluator.getMostClassifiedCategory(eval, category, nrOfCategories);
+                    correctlyClassifiedVideos[category][mostClassifiedCategory]++;
+                }
+
+                classifiedFrames[category] += 30;
                 for(int j = 0; j < nrOfCategories; j++) {
                     if(j == category) {
                         correctlyClassifiedFrames[category][category] += eval.truePositives().get(category);
+                        if(seqData) {
+                            correctlyClassifiedFrames[category][category] += eval2.truePositives().get(category);
+                            correctlyClassifiedFrames[category][category] += eval3.truePositives().get(category);
+                            correctlyClassifiedFrames[category][category] += eval4.truePositives().get(category);
+                            correctlyClassifiedFrames[category][category] += eval5.truePositives().get(category);
+                        }
                     } else {
                         correctlyClassifiedFrames[category][j] += eval.falsePositives().get(j);
+                        if(seqData) {
+                            correctlyClassifiedFrames[category][j] += eval2.falsePositives().get(j);
+                            correctlyClassifiedFrames[category][j] += eval3.falsePositives().get(j);
+                            correctlyClassifiedFrames[category][j] += eval4.falsePositives().get(j);
+                            correctlyClassifiedFrames[category][j] += eval5.falsePositives().get(j);
+                        }
                     }
                 }
             } catch (FileNotFoundException e) {
@@ -192,5 +227,29 @@ public class VideoClassificationThesisProject {
             }
         }
     }
+
+    private static int getPopularElement(int[] a)
+    {
+        int count = 1, tempCount;
+        int popular = a[0];
+        int temp = 0;
+        for (int i = 0; i < (a.length - 1); i++)
+        {
+            temp = a[i];
+            tempCount = 0;
+            for (int j = 1; j < a.length; j++)
+            {
+                if (temp == a[j])
+                    tempCount++;
+            }
+            if (tempCount > count)
+            {
+                popular = temp;
+                count = tempCount;
+            }
+        }
+        return popular;
+    }
+
 
 }

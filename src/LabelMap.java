@@ -10,7 +10,6 @@ import java.util.Map;
 public class LabelMap {
 
     public static final Map<Integer, String> labelMap = new HashMap();
-
     public static final ArrayList<String> labels = new ArrayList<String>();
 
     static {
@@ -26,11 +25,8 @@ public class LabelMap {
         labels.add(9, "saltwaterfishing");
         labels.add(10, "flyfishing");
 
-
         for(int i = 0; i < labels.size(); i++) {
             labelMap.put(i, labels.get(i));
         }
-
     }
-
 }

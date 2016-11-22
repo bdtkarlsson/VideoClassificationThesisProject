@@ -56,10 +56,10 @@ public class DataLoader {
 
         /*Get first part*/
         InputSplit trainingData = filesInDirSplit[0];
-        System.out.println("Data loaded size: " + trainingData.length());
+        System.out.println("Data 0 size: " + trainingData.length());
         /*Get second part*/
         InputSplit testingData = filesInDirSplit[1];
-        System.out.println("Data loaded size: " + testingData.length());
+        System.out.println("Data 1 size: " + testingData.length());
 
         /*Retrieve data set iterator of first data part*/
         ImageRecordReader reader = new ImageRecordReader(frame_height, frame_width, channels ,labelMaker);
@@ -112,6 +112,18 @@ public class DataLoader {
         return new AsyncDataSetIterator(sequenceIter, 1);
     }
 
+    /**
+     *
+     * @param fullPath The path to the video with the features
+     * @param startIdx The ID of the start video
+     * @param numOfFiles The number of files
+     * @param startFrame The ID of the start frame
+     * @param nrFrames The number of frames
+     * @param video_height The height of the video
+     * @param video_width The width of the video
+     * @return Record Reader with the features
+     * @throws Exception
+     */
     private static SequenceRecordReader getFeaturesReader(String fullPath, int startIdx, int numOfFiles, int startFrame,
                                                           int nrFrames, int video_height, int video_width) throws Exception {
         /*Get the files containing the video files*/
@@ -129,15 +141,26 @@ public class DataLoader {
         return crr;
     }
 
-    private static SequenceRecordReader getLabelsReader(String fullPath, int startIdx, int num) throws Exception {
+    /**
+     *
+     * @param fullPath The path to the file with the categories
+     * @param startIdx The ID of the start category file
+     * @param numOfFiles The number of files
+     * @return RecordReader with the categories
+     * @throws Exception
+     */
+    private static SequenceRecordReader getLabelsReader(String fullPath, int startIdx, int numOfFiles) throws Exception {
         /*Get the files containing the labels*/
-        InputSplit isLabels = new NumberedFileInputSplit(fullPath, startIdx, startIdx + num - 1);
+        InputSplit isLabels = new NumberedFileInputSplit(fullPath, startIdx, startIdx + numOfFiles - 1);
         /*Get the labels*/
         CSVSequenceRecordReader csvSeq = new CSVSequenceRecordReader();
         csvSeq.initialize(isLabels);
         return csvSeq;
     }
 
+    /**
+     * PreProcessor for the features. Scales the values from 0-255 to 0-1
+     */
     private static class VideoPreProcessor implements DataSetPreProcessor {
         @Override
         public void preProcess(org.nd4j.linalg.dataset.api.DataSet toPreProcess) {

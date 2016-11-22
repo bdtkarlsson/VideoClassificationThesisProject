@@ -37,27 +37,17 @@ public class VideoClassificationThesisProject {
     private static final String fileNameStandard = "sportclip_%d";
 
     public static void main(String[] args) {
-      //  evaluateVideoClips(true);
-        //evaluateModelSeq();
-        //evaluateModelNonSeq("saved_models/bestModel.bin");
+        evaluateVideoClips(false);
         //trainModel1();
-        trainModel2();
-        //trainModel4();
+       // trainModel2();
         //trainModel3();
-        //trainModel2();
 
     }
 
     private static void trainModel1() { // 6.5h 72 epochs
-        //  MultiLayerConfiguration conf = NetworkModels.getModel1(video_height, video_width, channels, nrOfCategories);
-        //  MultiLayerNetwork model = new MultiLayerNetwork(conf);
-        //  model.init();
-        MultiLayerNetwork model = null;
-        try {
-            model = ModelHandler.loadModel("saved_models/model1it3.bin");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        MultiLayerConfiguration conf = NetworkModels.getModel1(video_height, video_width, channels, nrOfCategories);
+        MultiLayerNetwork model = new MultiLayerNetwork(conf);
+        model.init();
         model.setListeners(new ScoreIterationListener(1), new HistogramIterationListener(1));
 
 
@@ -73,7 +63,7 @@ public class VideoClassificationThesisProject {
 
     }
 
-    private static void trainModel2() { //10:43 17/11
+    private static void trainModel2() { //10:45 17/11
         MultiLayerConfiguration conf = NetworkModels.getModel2(video_height, video_width, channels, nrOfCategories);
 
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
@@ -125,7 +115,7 @@ public class VideoClassificationThesisProject {
         MultiLayerNetwork nonSeqModel = null;
         try {
             seqModel = ModelHandler.loadModel("saved_models/model3it3.bin");
-            nonSeqModel = ModelHandler.loadModel("saved_models/model1it3.bin");
+            nonSeqModel = ModelHandler.loadModel("saved_models/model2it3.bin");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -158,7 +148,7 @@ public class VideoClassificationThesisProject {
                             path + ".mp4", category, 90, 10, nrOfCategories);
                 } else {
                     eval = NetworkEvaluator.evaluateVideoClipNonSeq(nonSeqModel,
-                            path + ".mp4", category, 0, 50, 3, nrOfCategories);
+                            path + ".mp4", category, 0,50, 3, nrOfCategories);
                 }
                 System.out.println("Video " + i + ", " + LabelMap.labelMap.get(category) + ": " + eval.recall());
                 if(seqData) {
@@ -183,7 +173,7 @@ public class VideoClassificationThesisProject {
                     correctlyClassifiedVideos[category][mostClassifiedCategory]++;
                 }
 
-                classifiedFrames[category] += 30;
+                classifiedFrames[category] += 50;
                 for(int j = 0; j < nrOfCategories; j++) {
                     if(j == category) {
                         correctlyClassifiedFrames[category][category] += eval.truePositives().get(category);

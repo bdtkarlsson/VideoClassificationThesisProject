@@ -7,10 +7,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="jcodec-0.2.0" level="project" />
     <orderEntry type="library" name="org.deeplearning4j:deeplearning4j-core:0.6.0" level="project" />
     <orderEntry type="library" name="org.datavec:datavec-api:0.6.0" level="project" />
+    <orderEntry type="library" name="org.slf4j:slf4j-simple:1.7.21" level="project" />
     <orderEntry type="library" name="org.nd4j:nd4j-native-platform:0.6.0" level="project" />
-    <orderEntry type="library" name="jcodec-0.2.0" level="project" />
-    <orderEntry type="library" name="org.deeplearning4j:deeplearning4j-ui:0.6.0" level="project" />
   </component>
 </module>

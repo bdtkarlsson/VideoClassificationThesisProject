@@ -24,8 +24,8 @@ public class NetworkEvaluator {
     private static final String tmpSeqFolder = "video_data/sequential_data/tmp_data/";
     private static final String tmpName = "video";
     private static final String tmpNonSeqFolder = "video_data/nonsequential_data/tmp_data/";
-    private static final int height = 168;
-    private static final int width = 168;
+    private static final int height = 224;
+    private static final int width = 224;
 
     /**
      *
@@ -34,7 +34,6 @@ public class NetworkEvaluator {
      * @return The evaluation result
      */
     public static Evaluation evaluate(MultiLayerNetwork model, DataSetIterator evaluationData, boolean sequentialData) {
-        System.out.println("Starting evaluation...");
         Evaluation totalEvaluation = new Evaluation(LabelMap.labelMap);
         while (evaluationData.hasNext()) {
             DataSet dsTest = evaluationData.next();

@@ -69,5 +69,4 @@ public class NetworkTrainer {
 
         return (MultiLayerNetwork) result.getBestModel();
     }
-
 }

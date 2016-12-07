@@ -17,15 +17,9 @@ import java.io.PrintWriter;
 /**
  * Author: Daniel Karlsson c11dkn@cs.umu.se
  *
- * Method for evaluating a trained network
+ * Methods for evaluating a trained network
  */
 public class NetworkEvaluator {
-
-    private static final String tmpSeqFolder = "video_data/sequential_data/tmp_data/";
-    private static final String tmpName = "video";
-    private static final String tmpNonSeqFolder = "video_data/nonsequential_data/tmp_data/";
-    private static final int height = 224;
-    private static final int width = 224;
 
     /**
      *
@@ -46,6 +40,12 @@ public class NetworkEvaluator {
         }
         return totalEvaluation;
     }
+
+    private static final String tmpSeqFolder = "video_data/sequential_data/tmp_data/";
+    private static final String tmpName = "video";
+    private static final String tmpNonSeqFolder = "video_data/nonsequential_data/tmp_data/";
+    private static final int height = 168;
+    private static final int width = 168;
 
     /**
      * Evaluate a video clip with a sequential (recurrent) model (e.g. LRCN)
@@ -99,53 +99,38 @@ public class NetworkEvaluator {
      */
     public static Evaluation evaluateVideoClipNonSeq(MultiLayerNetwork model, String path, int category, int startFrame, int nrOfFrames, int frameJump
     , int nrOfCategories) {
-        PrintWriter writer = null;
-        DataSetIterator testData = null;
+
         Evaluation eval = null;
         /*Open file*/
         File f = new File(path);
         if(f.exists() && f.isFile()) {
             try {
+
+                /*Create frames*/
                 for(int i = startFrame; i < (startFrame + nrOfFrames) * frameJump; i += frameJump) {
                     BufferedImage b = null;
-
                     Picture8Bit p = FrameGrab8Bit.getFrameFromFile(f, i);
                     b = AWTUtil.toBufferedImage8Bit(p);
                     File outputFile = new File(tmpNonSeqFolder + LabelMap.labelMap.get(category) + "/img_" + i + ".bmp");
                     ImageIO.write(b, "bmp", outputFile);
                 }
+
+                /*Get data and evaluate*/
                 DataSetIterator data = DataLoader.getNonSequentialData(tmpNonSeqFolder + LabelMap.labelMap.get(category), new String[] {"bmp"}, height,
-                        width, 3, 10, 100, nrOfCategories)[0];
+                        width, 3, nrOfFrames, 100, nrOfCategories)[0];
                 eval = evaluate(model, data, false);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JCodecException e) {
                 e.printStackTrace();
             }
+
+            /*Delete frames*/
             for(int i = startFrame; i < (startFrame + nrOfFrames) * frameJump; i += frameJump) {
                 File fd = new File(tmpNonSeqFolder + LabelMap.labelMap.get(category) + "/img_" + i + ".bmp");
                 fd.delete();
             }
         }
-
         return eval;
     }
-
-    public static int getMostClassifiedCategory(Evaluation eval, int category, int nrOfCategories) {
-        int tp = eval.truePositives().get(category);
-        int bestCategory = category;
-        int bestScore = tp;
-        for(int i = 0; i < nrOfCategories; i++) {
-            if(i != category) {
-                if(eval.falsePositives().get(i) > bestScore) {
-                    bestCategory = i;
-                    bestScore = eval.falsePositives().get(i);
-                }
-            }
-        }
-        return bestCategory;
-
-    }
-
-
 }

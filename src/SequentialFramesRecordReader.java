@@ -1,5 +1,7 @@
 import org.apache.commons.compress.utils.IOUtils;
 import org.datavec.api.conf.Configuration;
+import org.datavec.api.records.SequenceRecord;
+import org.datavec.api.records.metadata.RecordMetaData;
 import org.datavec.api.records.reader.SequenceRecordReader;
 import org.datavec.api.records.reader.impl.FileRecordReader;
 import org.datavec.api.split.InputSplit;
@@ -83,6 +85,21 @@ public class SequentialFramesRecordReader extends FileRecordReader implements Se
         ByteBuffer bb = ByteBuffer.wrap(data);
         SequentialFramesRecordReader.FixedByteBufferSeekableByteChannel sbc = new SequentialFramesRecordReader.FixedByteBufferSeekableByteChannel(bb);
         return this.loadData(sbc, null);
+    }
+
+    @Override
+    public SequenceRecord nextSequence() {
+        return null;
+    }
+
+    @Override
+    public SequenceRecord loadSequenceFromMetaData(RecordMetaData recordMetaData) throws IOException {
+        return null;
+    }
+
+    @Override
+    public List<SequenceRecord> loadSequenceFromMetaData(List<RecordMetaData> list) throws IOException {
+        return null;
     }
 
     private List<List<Writable>> loadData(SeekableByteChannel seekableByteChannel, File f) throws IOException {

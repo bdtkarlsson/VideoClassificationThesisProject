@@ -36,16 +36,7 @@ public class VideoClassificationThesisProject {
     private static final String fileNameStandard = "sportclip_%d";
 
     public static void main(String[] args) {
-        PrintStream out = null;
-        try {
-            out = new PrintStream(new FileOutputStream("/home/bdtkarlsson/Dropbox/output2.txt"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        System.setOut(out);
-
-        evaluateVideoClips(false, 30, 5);
-        evaluateVideoClips(false, 50, 3);
+        trainModel2();
     }
 
     private static void trainModel1() { // 6.5h 72 epochs
@@ -68,15 +59,10 @@ public class VideoClassificationThesisProject {
     }
 
     private static void trainModel2() { //it2: 85h 4 epochs it3: 44h 4 epochs
-        // MultiLayerConfiguration conf = NetworkModels.getModel2(video_height, video_width, channels, nrOfCategories);
-        // MultiLayerNetwork model = new MultiLayerNetwork(conf);
-        // model.init();
-        MultiLayerNetwork model = null;
-        try {
-            model = ModelHandler.loadModel("saved_models/model2it3.bin");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        MultiLayerConfiguration conf = NetworkModels.getModel2(video_height, video_width, channels, nrOfCategories);
+        MultiLayerNetwork model = new MultiLayerNetwork(conf);
+        model.init();
+
         model.setListeners(new ScoreIterationListener(1));
         DataSetIterator[] data = null;
         try {
@@ -91,8 +77,7 @@ public class VideoClassificationThesisProject {
     }
 
     private static void trainModel3() {
-        MultiLayerConfiguration conf = NetworkModels.getModel3(video_height, video_width, channels, nrOfCategories,
-                nrOfFramesPerVideo);
+        MultiLayerConfiguration conf = NetworkModels.getModel3(video_height, video_width, channels, nrOfCategories);
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
         model.init();
         model.setListeners(new ScoreIterationListener(1));

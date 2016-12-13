@@ -17,7 +17,8 @@ import java.util.Random;
  *
  * Class containing the network models.
  * Model 1 is a simple CNN model.
- * Model 2 is implementation of the AlexNet (http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
+ * Model 2 is implementation of the AlexNet
+ * (http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
  * found at https://github.com/deeplearning4j/ImageNet-Example/blob/master/src/main/java/imagenet/Models/AlexNet.java
  * Model 3 is a LRCN (http://jeffdonahue.com/lrcn/) inspired model. The code used is based on the VideoClassificationExample
  * provided by deeplearning4j
@@ -26,13 +27,13 @@ public class NetworkModels {
 
     /**
      * Returns the configuration for network model 1. The model is a simple CNN built as an initial model to be fast.
-     * @param video_height The height of the input
-     * @param video_width The width of the input
+     * @param height The height of the input
+     * @param width The width of the input
      * @param channels The number of channels of the input (e.g. 3 for RGB)
      * @param nrOfCategories The number of categories in the data
      * @return The model configuration
      */
-    public static MultiLayerConfiguration getModel1(int video_height, int video_width, int channels, int nrOfCategories) {
+    public static MultiLayerConfiguration getModel1(int height, int width, int channels, int nrOfCategories) {
 
         Random rand = new Random();
 
@@ -79,13 +80,23 @@ public class NetworkModels {
                         .build())
                 .backprop(true)
                 .pretrain(false)
-                .cnnInputSize(video_height, video_width, channels);
+                .cnnInputSize(height, width, channels);
 
         return conf.build();
     }
 
-
-    static public MultiLayerConfiguration getModel2(int video_height, int video_width, int channels, int nrOfOutputs) {
+    /**
+     * Returns the configuration of model 2, the AlexNet
+     * (http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf).
+     * Implementation found at
+     * https://github.com/deeplearning4j/ImageNet-Example/blob/master/src/main/java/imagenet/Models/AlexNet.java
+     * @param height height of the input
+     * @param width width of the input
+     * @param channels nr of input channels
+     * @param nrOfOutputs nr of output categories
+     * @return The network configuration
+     */
+    static public MultiLayerConfiguration getModel2(int height, int width, int channels, int nrOfOutputs) {
 
         double nonZeroBias = 1;
         double dropOut = 0.5;
@@ -173,15 +184,25 @@ public class NetworkModels {
                         .build())
                 .backprop(true)
                 .pretrain(false)
-                .cnnInputSize(video_height, video_width, channels);
+                .cnnInputSize(height, width, channels);
 
         return conf.build();
     }
 
-    public static MultiLayerConfiguration getModel3(int video_height, int video_width, int channels, int nrOfOutputs, int nrOfFrames) {
+    /**
+     * Model 3 is a LRCN (http://jeffdonahue.com/lrcn/) inspired model. The code used is based on the
+     * VideoClassificationExample provided by deeplearning4j
+     *
+     * @param height the height of the input
+     * @param width the width of the input
+     * @param channels nr of input channels
+     * @param nrOfOutputs nr of output categories
+     * @return The network configuration
+     */
+    public static MultiLayerConfiguration getModel3(int height, int width, int channels, int nrOfOutputs) {
 
-        int fc_height = ((((((video_height-14)/7)-2)/2)-2)/2)+1;
-        int fc_width = ((((((video_height-14)/7)-2)/2)-2)/2)+1;
+        int fc_height = ((((((height-14)/7)-2)/2)-2)/2)+1;
+        int fc_width = ((((((height-14)/7)-2)/2)-2)/2)+1;
 
         Updater updater = Updater.RMSPROP;
         MultiLayerConfiguration.Builder conf = new NeuralNetConfiguration.Builder()
@@ -242,116 +263,11 @@ public class NetworkModels {
                         .gradientNormalization(GradientNormalization.ClipElementWiseAbsoluteValue)
                         .gradientNormalizationThreshold(10)
                         .build())
-                .inputPreProcessor(0, new RnnToCnnPreProcessor(video_height, video_width, channels))
+                .inputPreProcessor(0, new RnnToCnnPreProcessor(height, width, channels))
                 .inputPreProcessor(3, new CnnToFeedForwardPreProcessor(fc_height, fc_width, 64))
                 .inputPreProcessor(4, new FeedForwardToRnnPreProcessor())
                 .pretrain(false).backprop(true);
 
         return conf.build();
-
     }
-
-    static public MultiLayerConfiguration getModel4(int video_height, int video_width, int channels, int nrOfOutputs) {
-
-        double nonZeroBias = 1;
-        double dropOut = 0.5;
-        Random rand = new Random();
-
-        SubsamplingLayer.PoolingType poolingType = SubsamplingLayer.PoolingType.MAX;
-
-        MultiLayerConfiguration.Builder conf = new NeuralNetConfiguration.Builder()
-                .seed(rand.nextInt(10000))
-                .weightInit(WeightInit.DISTRIBUTION)
-                .dist(new NormalDistribution(0.0, 0.01))
-                .activation("relu")
-                .updater(Updater.NESTEROVS)
-                .iterations(1)
-                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer) // normalize to prevent vanishing or exploding gradients
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .learningRate(1e-2)
-                .biasLearningRate(1e-2*2)
-                .learningRateDecayPolicy(LearningRatePolicy.Step)
-                .lrPolicyDecayRate(0.1)
-                .lrPolicySteps(100000)
-                .regularization(true)
-                .l2(5 * 1e-4)
-                .momentum(0.9)
-                .miniBatch(false)
-                .list()
-                .layer(0, new ConvolutionLayer.Builder(new int[]{11, 11}, new int[]{4, 4}, new int[]{3, 3})
-                        .name("cnn1")
-                        .nIn(channels)
-                        .nOut(96)
-                        .build())
-                .layer(1, new LocalResponseNormalization.Builder()
-                        .name("lrn1")
-                        .build())
-                .layer(2, new SubsamplingLayer.Builder(poolingType, new int[]{3, 3}, new int[]{2, 2})
-                        .name("maxpool1")
-                        .build())
-                .layer(3, new ConvolutionLayer.Builder(new int[]{5, 5}, new int[]{1, 1}, new int[]{2, 2})
-                        .name("cnn2")
-                        .nIn(96)
-                        .nOut(256)
-                        .biasInit(nonZeroBias)
-                        .build())
-                .layer(4, new LocalResponseNormalization.Builder()
-                        .name("lrn2")
-                        .k(2).n(5).alpha(1e-4).beta(0.75)
-                        .build())
-                .layer(5, new SubsamplingLayer.Builder(poolingType, new int[]{3, 3}, new int[]{2, 2})
-                        .name("maxpool2")
-                        .build())
-                .layer(6, new ConvolutionLayer.Builder(new int[]{3, 3}, new int[]{1, 1}, new int[]{1, 1})
-                        .name("cnn3")
-                        .nIn(256)
-                        .nOut(384)
-                        .build())
-                .layer(7, new ConvolutionLayer.Builder(new int[]{3, 3}, new int[]{1, 1}, new int[]{1, 1})
-                        .name("cnn4")
-                        .nIn(384)
-                        .nOut(384)
-                        .biasInit(nonZeroBias)
-                        .build())
-                .layer(8, new ConvolutionLayer.Builder(new int[]{3, 3}, new int[]{1, 1}, new int[]{1, 1})
-                        .name("cnn5")
-                        .nIn(384)
-                        .nOut(256)
-                        .biasInit(nonZeroBias)
-                        .build())
-                .layer(9, new SubsamplingLayer.Builder(poolingType, new int[]{3, 3}, new int[]{2, 2})
-                        .name("maxpool3")
-                        .build())
-                .layer(10, new DenseLayer.Builder()
-                        .name("ffn1")
-                        .nIn(6*6*256)
-                        .nOut(4096)
-                        .dist(new GaussianDistribution(0, 0.005))
-                        .biasInit(nonZeroBias)
-                        .dropOut(dropOut)
-                        .build())
-                .layer(11, new GravesLSTM.Builder()
-                        .name("lstm")
-                        .nIn(4096)
-                        .nOut(4096)
-                        .dist(new GaussianDistribution(0, 0.005))
-                        .biasInit(nonZeroBias)
-                        .dropOut(dropOut)
-                        .build())
-                .layer(12, new RnnOutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
-                        .name("output")
-                        .nIn(4096)
-                        .nOut(nrOfOutputs)
-                        .activation("softmax")
-                        .build())
-                .backprop(true)
-                .pretrain(false)
-                .inputPreProcessor(0, new RnnToCnnPreProcessor(video_height, video_width, channels))
-                .inputPreProcessor(10, new CnnToFeedForwardPreProcessor(6, 6, 256))
-                .inputPreProcessor(11, new FeedForwardToRnnPreProcessor())
-                .pretrain(false).backprop(true);
-
-        return conf.build();
-    }
-
 }

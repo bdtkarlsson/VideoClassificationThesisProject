@@ -254,47 +254,4 @@ public class VideoClassificationThesisProject {
         return popular;
     }
 
-    private static void evaluateDemo(String[] args) {
-
-        if(args.length >= 1) {
-
-            String videoPath = args[0];
-            MultiLayerNetwork model = null;
-            System.out.println("Loading model...");
-            try {
-                model = ModelHandler.loadModel("model3it2.bin");
-            } catch (IOException e) {
-                System.err.println("ERROR: No such model exist, " + "model2it2.bin");
-                return;
-            }
-            System.out.println("Model Loaded.");
-
-            Evaluation eval = null;
-
-            System.out.println("Start evaluation...");
-            try {
-                eval = NetworkEvaluator.evaluateVideoClipSeq(model, videoPath, 1, 0, 10, 11);
-                eval.merge(NetworkEvaluator.evaluateVideoClipSeq(model, videoPath, 1, 100, 10, 11));
-                eval.merge(NetworkEvaluator.evaluateVideoClipSeq(model, videoPath, 1, 500, 10, 11));
-                eval.merge(NetworkEvaluator.evaluateVideoClipSeq(model, videoPath, 1, 1000, 10, 11));
-                eval.merge(NetworkEvaluator.evaluateVideoClipSeq(model, videoPath, 1, 1500, 10, 11));
-                eval.merge(NetworkEvaluator.evaluateVideoClipSeq(model, videoPath, 1, 2000, 10, 11));
-            } catch(NullPointerException e) {
-                System.err.println("ERROR: No such video, " + videoPath);
-                return;
-            }
-            System.out.println("Evaluation results:");
-            for(int i = 0; i < 11; i++) {
-                System.out.print("Percentage of frames predicted to be " + LabelMap.labelMap.get(i) + ": ");
-                if(eval.truePositives().get(i) != 0) {
-                    System.out.println((int) (eval.truePositives().get(i) / 0.6) + "%");
-                } else {
-                    System.out.println((int) (eval.falsePositives().get(i) / 0.6) + "%");
-                }
-            }
-
-        } else {
-            System.err.println("ERROR: No input");
-        }
-    }
 }
